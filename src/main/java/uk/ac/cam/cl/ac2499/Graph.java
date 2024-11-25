@@ -31,7 +31,9 @@ public class Graph {
                     int startNodeId = Integer.parseInt(tokens[1].trim());
                     int endNodeId = Integer.parseInt(tokens[2].trim());
                     float distance = Float.parseFloat(tokens[3].trim());
+                    // Add twice to the adjacency matrix for undirected graph
                     adjacency.set(startNodeId, endNodeId, distance);
+                    adjacency.set(endNodeId, startNodeId, distance);
                 }
             }
         } finally {

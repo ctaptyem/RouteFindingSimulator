@@ -2,39 +2,57 @@ package uk.ac.cam.cl.ac2499;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.LinkedList;
 import java.util.concurrent.*;
 
 public class Simulator {
     Graph graph;
     CodeBlock algorithm;
+    int peGridSize;
     int processorCount;
     ProcessingElement[][] processors;
     ProcessingElement MCU;
     Memory sharedMemory;
-    ExecutorService executor;
+    CommunicationManager communications;
     
     public Simulator(Parameters parameters, Graph input, CodeBlock algorithm) {
         this.graph = input;
-        this.processorCount = parameters.processingElementCount;
-        this.processors = new ProcessingElement[processorCount][processorCount];
+        this.peGridSize = parameters.peGridSize;
+        this.processorCount = peGridSize * peGridSize + 1;
+        this.processors = new ProcessingElement[peGridSize][peGridSize];
         this.sharedMemory = new Memory();
-        this.MCU = new ProcessingElement(0, sharedMemory);
+        this.communications = new CommunicationManager(processorCount);
+        this.MCU = new ProcessingElement(0, sharedMemory, communications);
         this.algorithm = algorithm;
-        for (int i = 0; i < processorCount; i++) {
-            for (int j = 0; j < processorCount; j++) {
-                this.processors[i][j] = new ProcessingElement(i * processorCount + j + 1, sharedMemory);
+        for (int i = 0; i < peGridSize; i++) {
+            for (int j = 0; j < peGridSize; j++) {
+                this.processors[i][j] = new ProcessingElement(i * peGridSize + j + 1, sharedMemory, communications);
             }
         }
-        this.algorithm.processorCount = this.processorCount;
-        this.algorithm.PE_array = this.processors;
-        MCU.privateMemory.set("graph", this.graph);
-        this.MCU.code = algorithm;
+        this.algorithm.peGridSize = this.peGridSize;
+//        this.algorithm.PE_array = this.processors;
+        sharedMemory.set("graph", this.graph);
+        communications.send_instruction(0,algorithm);
+//        this.MCU.code = algorithm;
     }
     
     public void start() throws ExecutionException, InterruptedException, FileNotFoundException {
-        this.executor = Executors.newSingleThreadExecutor();
-        this.executor.submit(this.MCU).get();
+        ExecutorService mcuExecutor = Executors.newSingleThreadExecutor();
+        ExecutorService peExecutor = Executors.newFixedThreadPool(peGridSize * peGridSize);
+        Future<?>[][] jobs = new Future[peGridSize][peGridSize];
+        for (int i = 0; i < peGridSize; i++) {
+            for (int j = 0; j < peGridSize; j++) {
+                jobs[i][j] = peExecutor.submit(processors[i][j]);
+            }
+        }
+        mcuExecutor.submit(this.MCU).get();
+        for (int i = 0; i < peGridSize; i++) {
+            for (int j = 0; j < peGridSize; j++) {
+                jobs[i][j].get();
+            }
+        }
+        mcuExecutor.shutdown();
+        peExecutor.shutdown();
+        
         Integer[][] prevs = (Integer[][]) sharedMemory.get("output_prev");
         Double[][] dists = (Double[][]) sharedMemory.get("output_dist");
         PrintWriter pw = new PrintWriter("output.csv");
@@ -55,7 +73,7 @@ public class Simulator {
         }
         System.out.println("Finished writing");
         pw.close();
-        this.executor.shutdown();
+//        this.executor.shutdown();
         return;
 //        MCU.start();
 //        try {

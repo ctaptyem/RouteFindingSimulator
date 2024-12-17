@@ -12,7 +12,6 @@ import java.util.concurrent.*;
 public class Main {
     public static void run_simulator() throws IOException, ExecutionException, InterruptedException {
         Graph g = new Graph("zerod_example_2.txt");
-        System.out.println(g.adjacency);
         Parameters p = new Parameters(2);
         CodeBlock algo = new DijkstraMCU();
         Simulator s = new Simulator(p, g, algo);
@@ -26,7 +25,7 @@ public class Main {
         Memory mem = new Memory();
         mem.set("A", g.adjacency);
         mem.set("B", g.adjacency);
-        ProcessingElement pe = new ProcessingElement(0, mem);
+        ProcessingElement pe = new ProcessingElement(0, mem, new CommunicationManager(1));
         CodeBlock algo = new MatMulPE();
         pe.code = algo;
         ex.submit(pe).get();

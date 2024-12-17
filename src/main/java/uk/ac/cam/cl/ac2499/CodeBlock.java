@@ -5,10 +5,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 abstract public class CodeBlock implements Runnable {
     public int id;
-    public int processorCount;
-    public ProcessingElement[][] PE_array;
+    public int peGridSize;
     public Memory privateMemory;
     public Memory sharedMemory;
+    public CommunicationManager communications;
+    public boolean shutdown = false;
     
     abstract public void run();
 }

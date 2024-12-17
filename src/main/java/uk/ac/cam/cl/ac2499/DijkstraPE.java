@@ -4,10 +4,9 @@ import java.util.PriorityQueue;
 
 public class DijkstraPE extends CodeBlock {
     public int source;
-//    public ControlUnit MCU;
-    
     public void run() {
-        Graph graph = (Graph) privateMemory.get("graph");
+        communications.receive_data(0,id);
+        Graph graph = (Graph) sharedMemory.get("graph");
         Double[] dist = new Double[graph.length];
         Integer[] prev = new Integer[graph.length];
         for (int i = 0; i < graph.length; i++)
@@ -41,15 +40,7 @@ public class DijkstraPE extends CodeBlock {
         
         sharedMemory.set(String.format("%d_dist", source), dist);
         sharedMemory.set(String.format("%d_prev", source), prev);
-
-
-//        synchronized (MCU.data_queue) {
-//            try {
-//                MCU.data_queue.put(source);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
+        communications.send_data(id,0,String.format("%d", source));
     }
     
 }

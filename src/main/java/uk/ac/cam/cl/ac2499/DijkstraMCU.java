@@ -1,10 +1,8 @@
 package uk.ac.cam.cl.ac2499;
 
-import org.ejml.simple.SimpleMatrix;
+import java.beans.SimpleBeanInfo;
 
-import java.lang.reflect.Array;
-import java.util.List;
-import java.util.concurrent.*;
+import org.ejml.simple.SimpleMatrix;
 
 public class DijkstraMCU extends CodeBlock {
     public void run() {
@@ -24,12 +22,15 @@ public class DijkstraMCU extends CodeBlock {
         for (int j = 0; j < batch_size; j++) {
             communications.send_instruction(j+1,new Shutdown());
         }
-        Double[][] path_dists = new Double[graph.length][];
-        Integer[][] path_prevs = new Integer[graph.length][];
+        SimpleMatrix path_dists = new SimpleMatrix(graph.length, graph.length);
+        SimpleMatrix path_prevs = new SimpleMatrix(graph.length, graph.length);
+
         
         for (int source = 0; source < graph.length; source++) {
-            path_prevs[source] = (Integer[]) sharedMemory.get(String.format("%d_prev", source));
-            path_dists[source] = (Double[]) sharedMemory.get(String.format("%d_dist", source));
+            path_dists.insertIntoThis(source, 0, (SimpleMatrix) sharedMemory.get(String.format("%d_dist", source)));
+            path_prevs.insertIntoThis(source, 0, (SimpleMatrix) sharedMemory.get(String.format("%d_prev", source)));
+            // path_prevs[source] = (Integer[]) sharedMemory.get(String.format("%d_prev", source));
+            // path_dists[source] = (Double[]) sharedMemory.get(String.format("%d_dist", source));
         }
 
         sharedMemory.set("output_dist", path_dists);

@@ -1,21 +1,21 @@
 package uk.ac.cam.cl.ac2499;
 
-
-import org.ejml.simple.SimpleMatrix;
-
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.concurrent.*;
 
 
 public class Main {
     public static void run_simulator() throws IOException, ExecutionException, InterruptedException {
-        Graph g = new Graph("zerod_example_2.txt");
-        Parameters p = new Parameters(2);
-        CodeBlock algo = new DijkstraMCU();
-        Simulator s = new Simulator(p, g, algo);
-        s.start();
+        Graph g = new Graph("testing/input/zerod_example_2.txt");
+        System.out.println(g.adjacency);
+        Parameters p = new Parameters(1);
+        Simulator s = new Simulator(p, g, new FoxOttoMCU());
+        s.start("testing/output/output_foxotto_1.csv");
+        p = new Parameters(3);
+        s = new Simulator(p, g, new FoxOttoMCU());
+        s.start("testing/output/output_foxotto_2.csv");
+        s = new Simulator(p, g, new DijkstraMCU());
+        s.start("testing/output/output_dijkstra.csv");
     }
     
     public static void run_matmul() throws IOException, ExecutionException, InterruptedException {

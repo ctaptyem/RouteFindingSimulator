@@ -4,8 +4,8 @@ import org.ejml.simple.SimpleMatrix;
 
 public class MatMulPE extends CodeBlock {
     public void run() {
-        SimpleMatrix A = (SimpleMatrix) sharedMemory.get("A");
-        SimpleMatrix B = (SimpleMatrix) sharedMemory.get("B");
+        SimpleMatrix A = (SimpleMatrix) privateMemory.get("A");
+        SimpleMatrix B = (SimpleMatrix) privateMemory.get("B");
         int dim = A.getNumRows();
         SimpleMatrix C = new SimpleMatrix(dim, dim);
         // A and B should both be square matrices

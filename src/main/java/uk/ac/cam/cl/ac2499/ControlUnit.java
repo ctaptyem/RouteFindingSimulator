@@ -3,6 +3,8 @@ package uk.ac.cam.cl.ac2499;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+
 public class ControlUnit extends Thread{
     int id;
     int processorCount;
@@ -19,7 +21,7 @@ public class ControlUnit extends Thread{
 
     public void run() {
         this.code.id = id;
-        this.code.privateMemory = privateMemory;
+        this.code.pm = privateMemory;
         code.run();
     }
 }

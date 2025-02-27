@@ -3,6 +3,8 @@ package uk.ac.cam.cl.ac2499;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+
 public class CommunicationManager {
     LinkedBlockingQueue<String>[][] data_link;
     BlockingQueue<CodeBlock>[] instruction_link;

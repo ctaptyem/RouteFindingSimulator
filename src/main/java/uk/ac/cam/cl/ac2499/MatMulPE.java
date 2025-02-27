@@ -2,10 +2,12 @@ package uk.ac.cam.cl.ac2499;
 
 import org.ejml.simple.SimpleMatrix;
 
+import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+
 public class MatMulPE extends CodeBlock {
     public void run() {
-        SimpleMatrix A = (SimpleMatrix) privateMemory.get("A");
-        SimpleMatrix B = (SimpleMatrix) privateMemory.get("B");
+        SimpleMatrix A = (SimpleMatrix) pm.get("A");
+        SimpleMatrix B = (SimpleMatrix) pm.get("B");
         int dim = A.getNumRows();
         SimpleMatrix C = new SimpleMatrix(dim, dim);
         // A and B should both be square matrices
@@ -14,6 +16,6 @@ public class MatMulPE extends CodeBlock {
                 C.set(i, j, A.getRow(i).plus(B.getColumn(j).transpose()).elementMin());
             }
         }
-        sharedMemory.set("C", C);
+        sm.set("C", C);
     }
 }

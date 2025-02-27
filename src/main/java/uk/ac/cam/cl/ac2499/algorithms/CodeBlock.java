@@ -1,10 +1,14 @@
-package uk.ac.cam.cl.ac2499;
+package uk.ac.cam.cl.ac2499.algorithms;
+
+import uk.ac.cam.cl.ac2499.CommunicationManager;
+import uk.ac.cam.cl.ac2499.Memory;
 
 abstract public class CodeBlock implements Runnable {
     public int id;
     public int peGridSize;
-    public Memory privateMemory;
-    public Memory sharedMemory;
+    public Memory pm; //privateMemory
+    public Memory sm; // sharedMemory
+    public Memory mm; // MetricMemory
     public CommunicationManager communications;
     public boolean shutdown = false;
     

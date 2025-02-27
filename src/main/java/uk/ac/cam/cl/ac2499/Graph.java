@@ -36,7 +36,7 @@ public class Graph {
                 String[] tokens = line.split(" ");
                 // Assuming the format is (Edge ID, Start Node ID, End Node ID, Distance)
                 if (tokens.length == 4) {
-                    int edgeId = Integer.parseInt(tokens[0].trim());
+                    // int edgeId = Integer.parseInt(tokens[0].trim());
                     int startNodeId = Integer.parseInt(tokens[1].trim());
                     int endNodeId = Integer.parseInt(tokens[2].trim());
                     float length = Float.parseFloat(tokens[3].trim());

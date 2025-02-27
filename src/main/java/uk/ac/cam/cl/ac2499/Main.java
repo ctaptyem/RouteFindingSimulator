@@ -8,6 +8,7 @@ import org.ejml.simple.SimpleMatrix;
 import uk.ac.cam.cl.ac2499.algorithms.CannonsMCU;
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 import uk.ac.cam.cl.ac2499.algorithms.DijkstraMCU;
+import uk.ac.cam.cl.ac2499.algorithms.DynamicMCU;
 import uk.ac.cam.cl.ac2499.algorithms.FoxOttoMCU;
 
 
@@ -28,28 +29,28 @@ public class Main {
         // s.execute();
         // s.process_output("foxotto");
         // System.out.println("Finished Fox-Otto's algorithm");
-        // System.out.println("Starting Dijkstra's algorithm...");
-        // s = new Simulator(p, g, new DijkstraMCU(), new Memory());
-        // s.execute();
-        // s.process_output("dijkstra");
-        // System.out.println("Finished Dijkstra's algorithm");
-        // Memory sm = s.getSharedMemory();
-        // int from = 2;
-        // int to = 5;
-        // sm.set("from_node", new SimpleMatrix(new double[][]{{from}}));
-        // sm.set("to_node", new SimpleMatrix(new double[][]{{to}}));
-        // sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from,to)}}));
-        // g.update_edge(from, to, 4.0);
-        // System.out.println("Starting Dynamic algorithm...");
-        // s = new Simulator(p, g, new DynamicMCU(), sm);
-        // s.execute();
-        // s.process_output("dynamic");
-        // System.out.println("Finished Dynamic algorithm");
-        // System.out.println("Starting Dijkstra's algorithm...");
-        // s = new Simulator(p, g, new DijkstraMCU(), new Memory());
-        // s.execute();
-        // s.process_output("dijkstra");
-        // System.out.println("Finished Dijkstra's algorithm");
+        System.out.println("Starting Dijkstra's algorithm...");
+        s = new Simulator(p, g, new DijkstraMCU(), new Memory());
+        s.execute();
+        s.process_output("dijkstra");
+        System.out.println("Finished Dijkstra's algorithm");
+        Memory sm = s.getSharedMemory();
+        int from = 2;
+        int to = 5;
+        sm.set("from_node", new SimpleMatrix(new double[][]{{from}}));
+        sm.set("to_node", new SimpleMatrix(new double[][]{{to}}));
+        sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from,to)}}));
+        g.update_edge(from, to, 4.0);
+        System.out.println("Starting Dynamic algorithm...");
+        s = new Simulator(p, g, new DynamicMCU(), sm);
+        s.execute();
+        s.process_output("dynamic");
+        System.out.println("Finished Dynamic algorithm");
+        System.out.println("Starting Dijkstra's algorithm...");
+        s = new Simulator(p, g, new DijkstraMCU(), new Memory());
+        s.execute();
+        s.process_output("dijkstra");
+        System.out.println("Finished Dijkstra's algorithm");
 
     }
     

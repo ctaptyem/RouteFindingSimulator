@@ -37,13 +37,13 @@ public class FoxOttoPE extends CodeBlock{
 
         for (int num_iterations = 1; num_iterations < peGridSize; num_iterations++) {
             pm.add_metrics(9,2);
-            sm.set(String.format("%d_B", B_next_id), B);
+            sm.set(String.format("%d_B_%d", B_next_id, num_iterations), B);
             // Send B submatrix to neighbor
-            communications.send_data(id, B_next_id, String.format("%d_B", B_next_id));
+            communications.send_data(id, B_next_id, String.format("%d_B_%d", B_next_id, num_iterations));
             // print("Sent B to neighbor");
 
             // Receive new B submatrix from neighbor
-            timer.pause();
+            timer.pause();  
             B =  sm.get(communications.receive_data(B_prev_id, id));
             // print("Received new B");
 

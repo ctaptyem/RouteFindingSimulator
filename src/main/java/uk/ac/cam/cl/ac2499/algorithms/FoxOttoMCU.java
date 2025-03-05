@@ -15,9 +15,12 @@ public class FoxOttoMCU extends CodeBlock {
         int submatrix_dim = (int) Math.ceil((double) dim / peGridSize);
         pm.set("padded_graph", SimpleMatrix.filled(submatrix_dim * peGridSize, submatrix_dim * peGridSize, Double.POSITIVE_INFINITY));
         pm.get("padded_graph").insertIntoThis(0, 0, pm.get("graph"));
-
+        for (int i = 0; i < pm.get("padded_graph").getNumCols(); i++) {
+            pm.get("padded_graph").set(i,i,0);
+        }
         pm.add_metrics(0, 1);
         int max_iterations = (int)(Math.log(dim+1)/Math.log(2));
+        // max_iterations = 1;
         for (int num_iterations = 0; num_iterations < max_iterations; num_iterations++) {
             pm.add_metrics(3, 2);
 
@@ -70,6 +73,7 @@ public class FoxOttoMCU extends CodeBlock {
                         max_batch_time = pe_time;
                 }
             }
+            // if (num_iterations == 1) System.out.println(pm.get("padded_graph"));
             timer.add_time(max_batch_time);
             timer.resume();
         }

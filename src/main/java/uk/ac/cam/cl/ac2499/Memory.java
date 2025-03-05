@@ -9,11 +9,13 @@ public class Memory {
     long total_read;
     long total_write;
     ConcurrentHashMap<String, Long> long_store;
+    ConcurrentHashMap<String, Boolean> written_and_not_read;
 
     
     public Memory() {
         matrix_store = new ConcurrentHashMap<>();
         long_store = new ConcurrentHashMap<>();
+        written_and_not_read = new ConcurrentHashMap<>();
         total_read = 0;
         total_write = 0;
     }
@@ -26,6 +28,7 @@ public class Memory {
         // metric tracking
         SimpleMatrix ret = matrix_store.get(key);
         total_read += ret.getNumElements();
+        written_and_not_read.put(key, false);
         return ret;
     }
 
@@ -37,6 +40,11 @@ public class Memory {
         // metric tracking
         total_write += o.getNumElements();
         matrix_store.put(key, o);
+        if (written_and_not_read.containsKey(key) && written_and_not_read.get(key)) {
+            // System.out.println(String.format("%n%n%s WAS WRITTEN TO TWICE%n%n", key));
+        }
+        written_and_not_read.put(key, true);
+        
     }
 
     public void set(String key, long o) {

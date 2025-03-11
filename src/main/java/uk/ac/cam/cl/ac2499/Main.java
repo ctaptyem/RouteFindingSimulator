@@ -3,6 +3,13 @@ package uk.ac.cam.cl.ac2499;
 import java.io.IOException;
 import java.util.concurrent.*;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CannonsMCU;
@@ -32,7 +39,7 @@ public class Main {
         
 
         System.out.println("Loaded graph...");
-        Parameters p = new Parameters(4);
+        int p = 4;
         Simulator s;
         System.out.println("Starting Cannon's algorithm...");
         s = new Simulator(p, g, new CannonsMCU(), new Memory());
@@ -102,6 +109,62 @@ public class Main {
         ex.shutdown();
     }
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        run_simulator();
+        Options options = new Options();
+        // Option input = new Option("i", "input", true, "input file path");
+        // Option graph = new Option("g", "graph", true, "input random graph parameters");
+        options.addOption("i", "input", true, "input file path");
+        options.addOption("g", "graph", true, "input random graph parameters (e.g. node_count,edge_percent,weight_mean,weight_std,edge_seed,weight_seed)");
+        options.addOption("u", "undirected", true, "whether the graph is undirected");
+        Option output = new Option("o", "output", true, "measurement output file path");
+        output.setRequired(true);
+        options.addOption(output);
+        Option peGridSize = new Option("p", "peGridSize", true, "the length of the side of the processor array");
+        peGridSize.setRequired(true);
+        options.addOption(peGridSize);
+        Option algorithm = new Option("a", "algorithm", true, "the algorithm to execute ('dijkstra', 'foxotto', or 'cannons')");
+        algorithm.setRequired(true);
+        options.addOption(algorithm);
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd = null;
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("utility-name", options);
+            System.exit(1);
+        }
+
+        CodeBlock algo = null;
+        if (cmd.getOptionValue("algorithm").equals("dijkstra")) {
+            algo = new DijkstraMCU();
+        } else if (cmd.getOptionValue("algorithm").equals("foxotto")) {
+            algo = new FoxOttoMCU();
+        } else if (cmd.getOptionValue("algorithm").equals("cannons")) {
+            algo = new CannonsMCU();
+        } else {
+            System.out.println("Please specify a valid algorithm ('dijkstra', 'foxotto', or 'cannons')");
+            System.exit(1);
+        }
+        
+        Graph g = null;
+
+        if (cmd.hasOption("input")) {
+            g = new Graph(cmd.getOptionValue("input"), cmd.hasOption("undirected"));
+        } else if (cmd.hasOption("graph")) {
+            String[] graph_params = cmd.getOptionValue("graph").split(",");
+            int node_count = Integer.parseInt(graph_params[0]);
+            double edge_percent = Double.parseDouble(graph_params[1]);
+            int edge_seed = Integer.parseInt(graph_params[2]);
+            int weight_seed = Integer.parseInt(graph_params[3]);
+            g = new Graph(node_count, edge_percent, cmd.hasOption("undirected"), 50.0, 20.0, edge_seed, weight_seed);
+        } else {
+            System.out.println("An input file or random graph parameters must be specified (-i <input file> or -g <parameters>)");
+            System.exit(1);
+        }
+
+        Simulator s = new Simulator(Integer.parseInt(cmd.getOptionValue("peGridSize")), g, algo, new Memory());
+        s.execute();
+        s.record_measurement(cmd.getOptionValue("output"));
     }
 }

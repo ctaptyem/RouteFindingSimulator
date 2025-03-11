@@ -24,6 +24,7 @@ public class Graph {
     public final SimpleMatrix adjacency;
     public int length;
     public boolean undirected;
+    public String descriptor_string;
     
     public Graph(String filepath, boolean undirected) throws IOException {
         this.undirected = undirected;
@@ -51,6 +52,8 @@ public class Graph {
         }
 
         length = max_node_id;
+        int edge_count = undirected ? 2 * data.size() : data.size();
+        this.descriptor_string = String.format("%d,%f,%b,%f,%f,%d,%d", length, edge_count/((length * length - length)/(undirected ? 2 : 1)), undirected, null, null, null, null);
         adjacency = SimpleMatrix.filled(max_node_id+1, max_node_id+1, Double.POSITIVE_INFINITY);
         for (int i = 0; i <= max_node_id; i++) adjacency.set(i,i,0.0);
         for (Edge e : data) {
@@ -60,6 +63,7 @@ public class Graph {
     }
 
     public Graph(int node_count, double edge_percent, boolean undirected, double weight_mean, double weight_std, long edge_seed, long weight_seed) {
+        this.descriptor_string = String.format("%d,%f,%b,%f,%f,%d,%d", node_count, edge_percent, undirected, weight_mean, weight_std, edge_seed, weight_seed); 
         if (edge_percent < 0.0) {
             edge_percent = 0.0;
         } else if (edge_percent > 1.0) {
@@ -72,7 +76,7 @@ public class Graph {
         if (edge_percent < 0.5) { // sparse graph
             adjacency = SimpleMatrix.filled(node_count, node_count, Double.POSITIVE_INFINITY);
             for (int i = 0; i < node_count; i++) adjacency.set(i,i,0);
-            int edge_count = (int) (edge_percent * (node_count * node_count - node_count));
+            int edge_count = (int) (edge_percent * ((node_count * node_count - node_count) / (undirected ? 2 : 1)));
             while (edge_count > 0) {
                 int node_A = edge_rand.nextInt(node_count);
                 int node_B = edge_rand.nextInt(node_count);
@@ -93,7 +97,7 @@ public class Graph {
                 adjacency.set(i, Math.max(weight_rand.nextGaussian(weight_mean, weight_std), 0.1));
             }
             for (int i = 0; i < node_count; i++) adjacency.set(i,i,0);
-            int anti_edges = (int) ((1.0 - edge_percent) * (node_count * node_count - node_count));
+            int anti_edges = (int) ((1.0 - edge_percent) * ((node_count * node_count - node_count) / (undirected ? 2 : 1)));
             while (anti_edges > 0) {
                 int node_A = edge_rand.nextInt(node_count);
                 int node_B = edge_rand.nextInt(node_count);
@@ -115,6 +119,10 @@ public class Graph {
     public void update_edge(int node_A, int node_B, double new_weight) {
         adjacency.set(node_A, node_B, new_weight);
         if (undirected) adjacency.set(node_B, node_A, new_weight);
+    }
+
+    public String get_descriptor() {
+        return descriptor_string;
     }
 }
 

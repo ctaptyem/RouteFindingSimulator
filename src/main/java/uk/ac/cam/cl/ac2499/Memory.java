@@ -42,6 +42,7 @@ public class Memory {
         matrix_store.put(key, o);
         if (written_and_not_read.containsKey(key) && written_and_not_read.get(key)) {
             // System.out.println(String.format("%n%n%s WAS WRITTEN TO TWICE%n%n", key));
+            throw new RuntimeException(String.format("%n%n%s WAS WRITTEN TO TWICE%n%n", key));
         }
         written_and_not_read.put(key, true);
         

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.ejml.simple.SimpleMatrix;
-import org.junit.jupiter.api.Test;
 
 import uk.ac.cam.cl.ac2499.algorithms.CannonsMCU;
 import uk.ac.cam.cl.ac2499.algorithms.DijkstraMCU;
@@ -16,7 +15,7 @@ import uk.ac.cam.cl.ac2499.algorithms.FoxOttoMCU;
 public class ManualTest {
     void testAlgorithms() throws IOException, InterruptedException, ExecutionException {
         Graph g = new Graph("testing/input/zerod_example_2.txt", false);
-        Parameters p = new Parameters(1);
+        int p = 1;
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());
         s.execute();

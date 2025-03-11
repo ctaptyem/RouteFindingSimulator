@@ -1,6 +1,8 @@
 package uk.ac.cam.cl.ac2499;
 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.*;
 
@@ -19,9 +21,9 @@ public class Simulator {
     Memory metricMemory;
     CommunicationManager communications;
     
-    public Simulator(Parameters parameters, Graph input, CodeBlock algorithm, Memory sharedMemory) {
+    public Simulator(int peGridSize, Graph input, CodeBlock algorithm, Memory sharedMemory) {
         this.graph = input;
-        this.peGridSize = parameters.peGridSize;
+        this.peGridSize = peGridSize;
         this.processorCount = peGridSize * peGridSize + 1;
         this.processors = new ProcessingElement[peGridSize][peGridSize];
         this.sharedMemory = sharedMemory;
@@ -98,6 +100,13 @@ public class Simulator {
         }
         pw_out.close();
         pw_log.close();
+    }
+
+    public void record_measurement(String outputName) throws IOException {
+        FileWriter fw = new FileWriter(outputName, true);
+        // algorithm, peGridSize, node_count, edge_percent, undirected, weight_mean, weight_std, edge_seed, weight_seed, runtime, total_read, total_write
+        fw.write(String.format("%s,%d,%s,%d,%d,%d,%n", algorithm.getClass().getSimpleName(), peGridSize, graph.get_descriptor(), metricMemory.get_long("runtime"), sharedMemory.total_read, sharedMemory.total_write));
+        fw.close();
     }
 
     public Memory getSharedMemory() {

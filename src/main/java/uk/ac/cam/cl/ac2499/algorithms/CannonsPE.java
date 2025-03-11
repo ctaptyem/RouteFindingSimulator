@@ -11,8 +11,6 @@ public class CannonsPE extends CodeBlock{
         SimpleMatrix A =  sm.get(communications.receive_data(0,id));
         SimpleMatrix B =  sm.get(communications.receive_data(0,id));
 
-        SimpleMatrix A_copy = A.copy();
-        SimpleMatrix B_copy = B.copy();
         timer.resume();
         int dim = A.getNumRows();
         // pm.set("C", new SimpleMatrix(dim, dim));
@@ -93,28 +91,28 @@ public class CannonsPE extends CodeBlock{
             
             // print("Set new C");
         } 
-        boolean t = false;
-        for (int i = 0; i < A.getNumElements(); i++) {
-            if (A.get(i) != A_copy.get(i)) {
-                t = true;
-            }
-        }
-        if (t) {
-            print("A mismatch");
-            System.out.println(A);
-            System.out.println(A_copy);
-        }
-        // t = false;
-        // for (int i = 0; i < B.getNumElements(); i++) {
-        //     if (B.get(i) != B_copy.get(i)) {
+        // boolean t = false;
+        // for (int i = 0; i < A.getNumElements(); i++) {
+        //     if (A.get(i) != A_copy.get(i)) {
         //         t = true;
         //     }
         // }
         // if (t) {
-        //     print("B mismatch");
-        //     System.out.println(B);
-        //     System.out.println(B_copy);
+        //     print("A mismatch");
+        //     System.out.println(A);
+        //     System.out.println(A_copy);
         // }
+        // // t = false;
+        // // for (int i = 0; i < B.getNumElements(); i++) {
+        // //     if (B.get(i) != B_copy.get(i)) {
+        // //         t = true;
+        // //     }
+        // // }
+        // // if (t) {
+        // //     print("B mismatch");
+        // //     System.out.println(B);
+        // //     System.out.println(B_copy);
+        // // }
 
         pm.add_metrics(3, 0);
         sm.set(String.format("%d_C",id), C);

@@ -19,13 +19,13 @@ public class ManualTest {
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());
         s.execute();
-        SimpleMatrix dijkstra_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix dijkstra_dist = s.get_shared_memory().get("output_dist");
         s = new Simulator(p, g, new CannonsMCU(), new Memory());
         s.execute();
-        SimpleMatrix cannons_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix cannons_dist = s.get_shared_memory().get("output_dist");
         s = new Simulator(p, g, new FoxOttoMCU(), new Memory());
         s.execute();
-        SimpleMatrix foxotto_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix foxotto_dist = s.get_shared_memory().get("output_dist");
         for (int i = 0; i < g.length; i++) {
             for (int j = 0; j < g.length; j++) {
                 double dijkstra_value = dijkstra_dist.get(i,j);

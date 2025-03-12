@@ -9,6 +9,7 @@ public class CommunicationManager {
     LinkedBlockingQueue<String>[][] data_link;
     BlockingQueue<CodeBlock>[] instruction_link;
     int num_processors;
+    int total_communications;
     
     public CommunicationManager(int processorCount) {
         this.num_processors = processorCount;
@@ -19,6 +20,7 @@ public class CommunicationManager {
                 this.data_link[i][j] = new LinkedBlockingQueue<String>();
             this.instruction_link[i] = new LinkedBlockingQueue<CodeBlock>();
         }
+        this.total_communications = 0;
     }
     
     public void send_data(int source, int destination, String data) {
@@ -29,6 +31,7 @@ public class CommunicationManager {
     }
     public String receive_data(int source, int destination) {
         try {
+            total_communications+=1;
             return this.data_link[source][destination].take();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -40,5 +43,8 @@ public class CommunicationManager {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+    public long get_total_communications() {
+        return total_communications;
     }
 }

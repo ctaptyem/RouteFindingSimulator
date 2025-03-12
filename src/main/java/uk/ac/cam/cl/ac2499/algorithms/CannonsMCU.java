@@ -7,6 +7,7 @@ import uk.ac.cam.cl.ac2499.Timer;
 public class CannonsMCU extends CodeBlock{
     public void run() {
         Timer timer = new Timer();
+        Timer communication_timer = new Timer();
         timer.resume();
         pm.add_metrics(6, 2);
         pm.set("graph", sm.get("graph"));
@@ -47,6 +48,7 @@ public class CannonsMCU extends CodeBlock{
             }
             timer.pause();
             long max_batch_time = -1;
+            long total_comm_time = 0;
             pm.add_metrics(0,1);
             padded_graph = SimpleMatrix.filled(submatrix_dim * peGridSize, submatrix_dim * peGridSize, Double.POSITIVE_INFINITY);
             for (int i = 0; i < padded_graph.getNumCols(); i++) padded_graph.set(i,i,0);
@@ -57,15 +59,16 @@ public class CannonsMCU extends CodeBlock{
                     communications.receive_data(i*peGridSize+j+1, 0);
                     pm.set("sub", sm.get(String.format("%d_C",i*peGridSize+j+1)));
                     padded_graph.insertIntoThis(i*submatrix_dim, j*submatrix_dim, pm.get("sub"));
-                    long pe_time = mm.get_long(String.format("%d", i*peGridSize+j+1));
+                    long pe_time = mm.get_long(String.format("%d_runtime", i*peGridSize+j+1));
+                    total_comm_time+= mm.get_long(String.format("%d_commtime", i*peGridSize+j+1));
                     if (pe_time > max_batch_time)
                         max_batch_time = pe_time;
                 }
                 // System.out.printf("Cannon: [%s%s]\r", "#".repeat((int) (((double)(num_iterations*peGridSize+i)/(max_iterations*peGridSize))*80)), "-".repeat((int) ((1.0 - (double)(num_iterations*peGridSize+i)/(max_iterations*peGridSize))*80)));
-
             }
             // if (num_iterations == 1) System.out.println(padded_graph);
             timer.add_time(max_batch_time);
+            communication_timer.add_time((long) (total_comm_time/(peGridSize*peGridSize)));
             timer.resume();
         }
 
@@ -78,6 +81,7 @@ public class CannonsMCU extends CodeBlock{
         }
         timer.pause();
         mm.set("runtime", timer.get_time());
+        mm.set("commtime", communication_timer.get_time());
         System.out.printf("Cannons: [%s]%n","#".repeat(80));
         communications.send_instruction(0, new Shutdown());
     }

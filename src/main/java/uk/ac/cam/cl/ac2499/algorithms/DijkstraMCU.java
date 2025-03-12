@@ -7,6 +7,7 @@ import uk.ac.cam.cl.ac2499.Timer;
 public class DijkstraMCU extends CodeBlock {
     public void run() {
         Timer timer = new Timer();
+        Timer communication_timer = new Timer();
         timer.resume();
         pm.add_metrics(6, 2);
         pm.set("graph", sm.get("graph"));
@@ -30,7 +31,9 @@ public class DijkstraMCU extends CodeBlock {
             long max_batch_time = -1;
             for (int j = 0; j < batch_size && i+j < graph_length; j++) {
                 pm.add_metrics(7, 1);
+                // communication_timer.resume();
                 this.communications.receive_data(j+1,0);
+                // communication_timer.pause();
                 long pe_time = mm.get_long(String.format("%d", j+1));
                 if (pe_time > max_batch_time)
                     max_batch_time = pe_time;
@@ -54,6 +57,7 @@ public class DijkstraMCU extends CodeBlock {
         sm.set("output_prev", pm.get("path_prevs"));
         timer.pause();
         mm.set("runtime", timer.get_time());
+        mm.set("commtime", communication_timer.get_time());
         System.out.printf("Dijkstra: [%s]%n","#".repeat(80));
         communications.send_instruction(0,new Shutdown());
     }

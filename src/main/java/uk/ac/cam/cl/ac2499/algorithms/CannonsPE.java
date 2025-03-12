@@ -7,6 +7,7 @@ import uk.ac.cam.cl.ac2499.Timer;
 public class CannonsPE extends CodeBlock{
     public void run() {
         Timer timer = new Timer();
+        Timer communication_timer = new Timer();
         pm.add_metrics(5,1);
         SimpleMatrix A =  sm.get(communications.receive_data(0,id));
         SimpleMatrix B =  sm.get(communications.receive_data(0,id));
@@ -67,13 +68,13 @@ public class CannonsPE extends CodeBlock{
 
             // Receive new A submatrix from neighbor
             timer.pause();
+            communication_timer.resume();
             A = sm.get(communications.receive_data(A_prev_id, id));
             // print("Received new A");
-            timer.resume();
 
             // Receive new B submatrix from neighbor
-            timer.pause();
             B = sm.get(communications.receive_data(B_prev_id, id));
+            communication_timer.pause();
             // print("Received new B");
             timer.resume();
 
@@ -117,7 +118,8 @@ public class CannonsPE extends CodeBlock{
         pm.add_metrics(3, 0);
         sm.set(String.format("%d_C",id), C);
         timer.pause();
-        mm.set(String.format("%d", id), timer.get_time());
+        mm.set(String.format("%d_runtime", id), timer.get_time());
+        mm.set(String.format("%d_commtime", id), communication_timer.get_time());
         communications.send_data(id, 0, String.format("%d_C",id));
         // print("Sent final C");
  

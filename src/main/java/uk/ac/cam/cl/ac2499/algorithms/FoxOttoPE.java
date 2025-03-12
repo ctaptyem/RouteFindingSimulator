@@ -8,6 +8,7 @@ public class FoxOttoPE extends CodeBlock{
     
     public void run() {
         Timer timer = new Timer();
+        Timer communication_timer = new Timer();
         pm.add_metrics(5,1);
         SimpleMatrix B = sm.get(communications.receive_data(0,id));
         communications.send_data(id,0,"need new A");
@@ -44,12 +45,14 @@ public class FoxOttoPE extends CodeBlock{
 
             // Receive new B submatrix from neighbor
             timer.pause();  
+            communication_timer.resume();
             B =  sm.get(communications.receive_data(B_prev_id, id));
             // print("Received new B");
 
             communications.send_data(id,0,"need new A");
             A = sm.get(communications.receive_data(0, id));
             // print("Received new A");
+            communication_timer.pause();
             timer.resume();
 
             for (int i = 0; i < dim; i++) {
@@ -70,7 +73,8 @@ public class FoxOttoPE extends CodeBlock{
         pm.add_metrics(3, 0);
         sm.set(String.format("%d_C",id), C);
         timer.pause();
-        mm.set(String.format("%d", id), timer.get_time());
+        mm.set(String.format("%d_runtime", id), timer.get_time());
+        mm.set(String.format("%d_commtime", id), communication_timer.get_time());
         communications.send_data(id, 0, String.format("%d_C",id));
         // print("Sent final C");
     }

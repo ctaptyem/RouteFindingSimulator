@@ -68,13 +68,13 @@ public class StaticTest {
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());
         s.execute();
-        SimpleMatrix dijkstra_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix dijkstra_dist = s.get_shared_memory().get("output_dist");
         s = new Simulator(p, g, new CannonsMCU(), new Memory());
         s.execute();
-        SimpleMatrix cannons_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix cannons_dist = s.get_shared_memory().get("output_dist");
         s = new Simulator(p, g, new FoxOttoMCU(), new Memory());
         s.execute();
-        SimpleMatrix foxotto_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix foxotto_dist = s.get_shared_memory().get("output_dist");
 
         for (int i = 0; i < g.length; i++) {
             for (int j = 0; j < g.length; j++) {
@@ -107,13 +107,13 @@ public class StaticTest {
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());
         s.execute();
-        SimpleMatrix dijkstra_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix dijkstra_dist = s.get_shared_memory().get("output_dist");
         s = new Simulator(p, g, new CannonsMCU(), new Memory());
         s.execute();
-        SimpleMatrix cannons_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix cannons_dist = s.get_shared_memory().get("output_dist");
         s = new Simulator(p, g, new FoxOttoMCU(), new Memory());
         s.execute();
-        SimpleMatrix foxotto_dist = s.getSharedMemory().get("output_dist");
+        SimpleMatrix foxotto_dist = s.get_shared_memory().get("output_dist");
         boolean mismatch_1 = false;
         boolean mismatch_2 = false;
         boolean mismatch_3 = false;

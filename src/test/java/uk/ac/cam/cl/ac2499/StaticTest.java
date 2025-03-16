@@ -102,7 +102,7 @@ public class StaticTest {
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testAllMatch(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
-        Graph g = new Graph(config[0],config[1],true,50.0,20.0,config[2],config[3]);
+        Graph g = new Graph(config[0],config[1]/10000.0,true,50.0,20.0,config[2],config[3]);
         int p = config[4];
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());

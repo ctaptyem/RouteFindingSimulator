@@ -12,7 +12,7 @@ public class DynamicMCU extends CodeBlock {
         int graph_length = graph.getNumRows();
         int batch_size = peGridSize * peGridSize;
         SimpleMatrix dist = sm.get("output_dist");
-        SimpleMatrix pred = sm.get("output_prev");
+        SimpleMatrix pred = sm.get("output_pred");
 
         timer.pause();
         pm.add_metrics(0, 1);
@@ -50,17 +50,17 @@ public class DynamicMCU extends CodeBlock {
         }
 
         pm.set("path_dists", new SimpleMatrix(graph_length, graph_length));
-        pm.set("path_prevs", new SimpleMatrix(graph_length, graph_length));
+        pm.set("path_preds", new SimpleMatrix(graph_length, graph_length));
 
         pm.add_metrics(0, 1);
         for (int source = 0; source < graph_length; source++) {
             pm.add_metrics(7, 1);
             pm.get("path_dists").insertIntoThis(source, 0, sm.get(String.format("%d_dist", source)));
-            pm.get("path_prevs").insertIntoThis(source, 0, sm.get(String.format("%d_prev", source)));
+            pm.get("path_preds").insertIntoThis(source, 0, sm.get(String.format("%d_pred", source)));
         }
 
         sm.set("output_dist", pm.get("path_dists"));
-        sm.set("output_prev", pm.get("path_prevs"));
+        sm.set("output_pred", pm.get("path_preds"));
         timer.pause();
         mm.set("runtime", timer.get_time());
         System.out.printf("MA: [%s]%n","#".repeat(80));

@@ -63,7 +63,6 @@ public class Simulator {
     public void process_output(String outputName) throws FileNotFoundException {
         String outputFileName = String.format("testing/output/output-%s.csv", outputName);
         String logFileName = String.format("testing/output/log-%s.txt", outputName);
-        // Integer[][] prevs = (Integer[][]) sharedMemory.get("output_prev");
         double[][] dists = ((SimpleMatrix) sharedMemory.get("output_dist")).toArray2();
         PrintWriter pw_out = new PrintWriter(outputFileName);
         PrintWriter pw_log = new PrintWriter(logFileName);
@@ -85,18 +84,18 @@ public class Simulator {
             pw_out.println();
         }
 
-        if (sharedMemory.contains("output_prev")) {
-            String prevFileName = String.format("testing/output/predecessors-%s.csv", outputName);
-            PrintWriter pw_prev = new PrintWriter(prevFileName);
-            double[][] prev = ((SimpleMatrix) sharedMemory.get("output_prev")).toArray2();
+        if (sharedMemory.contains("output_pred")) {
+            String predFileName = String.format("testing/output/predecessors-%s.csv", outputName);
+            PrintWriter pw_pred = new PrintWriter(predFileName);
+            double[][] pred = ((SimpleMatrix) sharedMemory.get("output_pred")).toArray2();
             for (int i = 0; i < dists.length; i++) {
                 for (int j = 0; j < dists[0].length; j++) {
-                    pw_prev.print((int)prev[i][j]+1);
-                    pw_prev.print(",");
+                    pw_pred.print((int)pred[i][j]);
+                    pw_pred.print(",");
                 }
-                pw_prev.println();
+                pw_pred.println();
             }
-            pw_prev.close();
+            pw_pred.close();
         }
         pw_out.close();
         pw_log.close();

@@ -18,7 +18,8 @@ public class DynamicPE extends CodeBlock {
 
         pm.set("dist", sm.get(communications.receive_data(0, id)));
         pm.set("pred", sm.get(communications.receive_data(0, id)));
-        pm.set("visited", new SimpleMatrix(1, graph_length));
+        print(String.format("SOURCE: %d", source));
+        // pm.set("visited", new SimpleMatrix(1, graph_length));
 
         double new_weight = pm.get("graph").get(from_node, to_node);
         double weight_change = new_weight - old_weight;
@@ -26,6 +27,7 @@ public class DynamicPE extends CodeBlock {
         if (weight_change > 0) {
             // decremental algorithm
             if (pm.get("pred").get(to_node) == from_node) {
+                print("STARTED DEC");
                 pm.set("visited", SimpleMatrix.filled(1, graph_length, 0));
                 boolean change = true;
                 pm.get("visited").set(to_node, 1);
@@ -34,7 +36,7 @@ public class DynamicPE extends CodeBlock {
                     change = false;
                     for (int v = 0; v < graph_length; v++) {
                         int predecessor = (int) pm.get("pred").get(v);
-                        if (pm.get("visited").get(v)!=1 && predecessor > -1 && pm.get("visited").get(predecessor) != 0) {
+                        if (pm.get("visited").get(v)<1 && predecessor > -1 && pm.get("visited").get(predecessor) != 0) {
                             pm.get("visited").set(v, 1);
                             change = true;
                         }
@@ -47,13 +49,12 @@ public class DynamicPE extends CodeBlock {
                     }
                 }
 
-
                 pm.set("pq", new SimpleMatrix(1, graph_length)); 
                 pm.get("pq").set(0, to_node);
                 int pq_size = 1;
 
-
                 while (pq_size > 0) {
+                    print(String.format("PQ SIZE IS %d", pq_size));
                     pm.add_metrics(2, 3);
                     int u = Heap.heap_pop("pq", pq_size, pm, sm);
                     pq_size--;
@@ -62,9 +63,6 @@ public class DynamicPE extends CodeBlock {
                         double weight = pm.get("graph").get(v, u);
                         if (weight != 0 && pm.get("dist").get(u) > pm.get("dist").get(v) + weight) {
                             pm.get("pred").set(u, v);
-                            if (u == 0 && v == 6) {
-                                print("\n\nSomething\n\n");
-                            }
                             pm.get("dist").set(u, pm.get("dist").get(v) + weight);
                         }
                     }
@@ -86,7 +84,8 @@ public class DynamicPE extends CodeBlock {
             }
         } else {
             // incremental algorithm
-            if (pm.get("dist").get(to_node) >= pm.get("dist").get(from_node) + new_weight) { // no improvement can be accomplished otherwise
+            if (pm.get("dist").get(to_node) > pm.get("dist").get(from_node) + new_weight) { // no improvement can be accomplished otherwise // WAS >=
+                print("STARTED INC");
                 pm.set("pq", new SimpleMatrix(1, graph_length)); 
                 pm.get("dist").set(to_node, pm.get("dist").get(from_node) + new_weight);
                 pm.get("pred").set(to_node, from_node);
@@ -94,6 +93,7 @@ public class DynamicPE extends CodeBlock {
                 int pq_size = 1;
 
                 while (pq_size > 0) {
+                    print(String.format("PQ SIZE IS %d", pq_size));
                     pm.add_metrics(2, 3);
                     int u = Heap.heap_pop("pq", pq_size, pm, sm);
                     pq_size--;
@@ -105,21 +105,23 @@ public class DynamicPE extends CodeBlock {
                             pm.add_metrics(9, 2);
                             pm.get("dist").set(v, pm.get("dist").get(u) + weight);
                             pm.get("pred").set(v, u);
-                            // print(String.format("%d", pq_size));
                             boolean inserted = Heap.heap_update_or_insert(v, "pq", pq_size, pm, sm);
                             if (inserted) pq_size++;
                         }
                     }
                 }
+                print("EXITED WHILE LOOP");
             } 
         }
+
+        print(String.format("PREPARING TO SEND DATA, dist: %b, pred: %b", pm.contains("dist"), pm.contains("pred")));
         
         pm.add_metrics(3, 0);
         sm.set(String.format("%d_dist", source), pm.get("dist"));
-        sm.set(String.format("%d_prev", source), pm.get("pred"));
+        sm.set(String.format("%d_pred", source), pm.get("pred"));
         timer.pause();
         mm.set(String.format("%d", id), timer.get_time());
         communications.send_data(id,0,String.format("%d", source));
-
+        print(String.format("SENT DATA, dist: %b, pred: %b", sm.contains(String.format("%d_dist", source)), sm.contains(String.format("%d_pred", source))));
     }
 }

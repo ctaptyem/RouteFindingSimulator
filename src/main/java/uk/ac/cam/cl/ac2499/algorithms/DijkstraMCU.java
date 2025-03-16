@@ -14,7 +14,7 @@ public class DijkstraMCU extends CodeBlock {
         int graph_length = pm.get("graph").getNumCols();
         int batch_size = peGridSize * peGridSize;
         pm.set("path_dists", new SimpleMatrix(graph_length, graph_length));
-        pm.set("path_prevs", new SimpleMatrix(graph_length, graph_length));
+        pm.set("path_preds", new SimpleMatrix(graph_length, graph_length));
         timer.pause();
 
         pm.add_metrics(0, 1);
@@ -50,11 +50,11 @@ public class DijkstraMCU extends CodeBlock {
         for (int source = 0; source < graph_length; source++) {
             pm.add_metrics(7, 1);
             pm.get("path_dists").insertIntoThis(source, 0, sm.get(String.format("%d_dist", source)));
-            pm.get("path_prevs").insertIntoThis(source, 0, sm.get(String.format("%d_prev", source)));
+            pm.get("path_preds").insertIntoThis(source, 0, sm.get(String.format("%d_pred", source)));
         }
 
         sm.set("output_dist", pm.get("path_dists"));
-        sm.set("output_prev", pm.get("path_prevs"));
+        sm.set("output_pred", pm.get("path_preds"));
         timer.pause();
         mm.set("runtime", timer.get_time());
         mm.set("commtime", communication_timer.get_time());
@@ -100,7 +100,7 @@ public class DijkstraMCU extends CodeBlock {
 //         }
 
 //         sm.set("output_dist", pm.get("path_dists"));
-//         sm.set("output_prev", pm.get("path_prevs"));
+//         sm.set("output_pred", pm.get("path_prevs"));
 //         mm.set("times", run_times);
 //         communications.send_instruction(0,new Shutdown());
 //     }
@@ -140,7 +140,7 @@ public class DijkstraMCU extends CodeBlock {
 //         }
 
 //         sharedMemory.set("output_dist", path_dists);
-//         sharedMemory.set("output_prev", path_prevs);
+//         sharedMemory.set("output_pred", path_prevs);
 //         communications.send_instruction(0,new Shutdown());
 //     }
 // }

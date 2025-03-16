@@ -15,14 +15,14 @@ public class DijkstraPE extends CodeBlock {
         pm.set("graph", sm.get(communications.receive_data(0,id)));
         int graph_length = pm.get("graph").getNumCols();
         pm.set("dist", SimpleMatrix.filled(1, graph_length, Double.POSITIVE_INFINITY));
-        pm.set("prev", SimpleMatrix.filled(1, graph_length, -1));
+        pm.set("pred", SimpleMatrix.filled(1, graph_length, -1));
         
         pm.set("pq", new SimpleMatrix(1, graph_length)); 
         pm.get("pq").set(0, source);
         int pq_size = 1;
 
         pm.get("dist").set(source, 0.0);
-        pm.get("prev").set(source, source);
+        pm.get("pred").set(source, source);
 
         while (pq_size > 0) {
             pm.add_metrics(2, 3);
@@ -35,7 +35,7 @@ public class DijkstraPE extends CodeBlock {
                 if (weight != 0 && pm.get("dist").get(v) > pm.get("dist").get(u) + weight) {
                     pm.add_metrics(9, 2);
                     pm.get("dist").set(v, pm.get("dist").get(u) + weight);
-                    pm.get("prev").set(v, u);
+                    pm.get("pred").set(v, u);
 
                     boolean inserted = Heap.heap_update_or_insert(v, "pq", pq_size, pm, sm);
                     if (inserted) pq_size++;
@@ -45,7 +45,7 @@ public class DijkstraPE extends CodeBlock {
 
         pm.add_metrics(3, 0);
         sm.set(String.format("%d_dist", source), pm.get("dist"));
-        sm.set(String.format("%d_prev", source), pm.get("prev"));
+        sm.set(String.format("%d_pred", source), pm.get("pred"));
         timer.pause();
         mm.set(String.format("%d", id), timer.get_time());
         communications.send_data(id,0,String.format("%d", source));

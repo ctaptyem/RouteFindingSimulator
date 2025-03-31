@@ -20,11 +20,12 @@ import uk.ac.cam.cl.ac2499.algorithms.FoxOttoMCU;
 
 
 public class Main {
+
     public static void run_simulator() throws IOException, ExecutionException, InterruptedException {
-        Graph g = new Graph("testing/input/zerod_example_2.txt", true); //new Graph("testing/input/OL.cedge");
+        // Graph g = new Graph("testing/input/zerod_example_2.txt", true); //new Graph("testing/input/OL.cedge");
         // Graph g = new Graph(200,0.75,true,50.0,20.0,9063,3609);
-        // Graph g = new Graph(4,0.300000,true, 50.0, 20.0, 4776, 3417);
-        System.out.println(g.adjacency);
+        Graph g = new Graph(6,0.100000,true, 50.0, 20.0, 6877, 487);
+        // System.out.println(g.adjacency);
         // for (int i = 0; i < g.length; i++) {
         //     for (int j = 0; j < g.length; j++) {
         //         if (Double.isFinite(g.adjacency.get(i,j))) {
@@ -39,8 +40,16 @@ public class Main {
         
 
         System.out.println("Loaded graph...");
-        int p = 4;
+        int p = 2;
         Simulator s;
+
+        System.out.println("Starting Dijkstra's algorithm...");
+        s = new Simulator(p, g, new DijkstraMCU(), new Memory());
+        s.execute();
+        s.process_output("dijkstra");
+        System.out.println("Finished Dijkstra's algorithm");
+        SimpleMatrix dijkstra_dist = s.get_shared_memory().get("output_dist");
+
         // System.out.println("Starting Cannon's algorithm...");
         // s = new Simulator(p, g, new CannonsMCU(), new Memory());
         // s.execute();
@@ -51,37 +60,37 @@ public class Main {
         // s.execute();
         // s.process_output("foxotto");
         // System.out.println("Finished Fox-Otto's algorithm");
-        System.out.println("Starting Dijkstra's algorithm...");
-        s = new Simulator(p, g, new DijkstraMCU(), new Memory());
-        s.execute();
-        s.process_output("dijkstra");
-        System.out.println("Finished Dijkstra's algorithm");
+        
 
-        Memory sm = s.get_shared_memory();
-        int from = 5;
-        int to = 1;
-        sm.set("from_node", new SimpleMatrix(new double[][]{{from}}));
-        sm.set("to_node", new SimpleMatrix(new double[][]{{to}}));
-        sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from,to)}}));
-        g.update_edge(from, to,3.0, false);
-        System.out.println("Starting Dynamic algorithm...");
-        s = new Simulator(p, g, new DynamicMCU(), sm);
-        s.execute();
+        // Memory sm = s.get_shared_memory();
+        // int from = 18;
+        // int to = 5;
+        // sm.set("from_node", new SimpleMatrix(new double[][]{{from}}));
+        // sm.set("to_node", new SimpleMatrix(new double[][]{{to}}));
+        // sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from,to)}}));
+        // g.update_edge(from, to,Double.POSITIVE_INFINITY, false);
+        // System.out.println("Starting Dynamic algorithm...");
+        // s = new Simulator(p, g, new DynamicMCU(), sm);
+        // s.execute();
         // sm.set("to_node", new SimpleMatrix(new double[][]{{from}}));
         // sm.set("from_node", new SimpleMatrix(new double[][]{{to}}));
-        // g.update_edge(to, from, 65.306870, false);
+        // g.update_edge(to, from, Double.POSITIVE_INFINITY, false);
         // System.out.println("Starting Dynamic algorithm...");
         // s = new Simulator(p, g, new DynamicMCU(), sm);
         // s.execute();
         // s.process_output("dynamic");
         // System.out.println("Finished Dynamic algorithm");
+        // SimpleMatrix dynamic_dist = sm.get("output_dist");
+        // SimpleMatrix dynamic_pred = sm.get("output_pred");
+
         // System.out.println("Starting Dijkstra's algorithm...");
         // s = new Simulator(p, g, new DijkstraMCU(), new Memory());
         // s.execute();
         // s.process_output("dijkstra");
-        System.out.println("Finished Dijkstra's algorithm");
+        // System.out.println("Finished Dijkstra's algorithm");
 
-        System.out.println(g.adjacency);
+        // SimpleMatrix dijkstra_dist = sm.get("output_dist");
+        // SimpleMatrix dijkstra_pred = s.get_shared_memory().get("output_pred");
 
     }
     
@@ -160,7 +169,7 @@ public class Main {
         s.record_measurement(cmd.getOptionValue("output"));
     }
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        // execute_with_arguments(args);
-        run_simulator();
+        execute_with_arguments(args);
+        // run_simulator();
     }
 }

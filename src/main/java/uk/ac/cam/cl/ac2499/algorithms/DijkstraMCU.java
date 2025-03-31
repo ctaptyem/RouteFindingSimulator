@@ -33,6 +33,7 @@ public class DijkstraMCU extends CodeBlock {
                 pm.add_metrics(7, 1);
                 // communication_timer.resume();
                 this.communications.receive_data(j+1,0);
+                this.communications.receive_data(j+1,0);
                 // communication_timer.pause();
                 long pe_time = mm.get_long(String.format("%d", j+1));
                 if (pe_time > max_batch_time)

@@ -50,14 +50,17 @@ def plot(df: pd.DataFrame, x_col: str, y_col: str, log_x: bool, log_y: bool, x_n
 
 def main():
     # algorithm,pe_grid_size,node_count,edge_percentage,undirected,weight_mean,weight_std,edge_seed,weight_seed,runtime,commtime,commcount,total_read,total_write
-    df = pd.read_csv('/home/andrei/Dev/RouteFindingSimulator/measurements/test_commtime3.csv')
+    df = pd.read_csv('/home/andrei/Dev/RouteFindingSimulator/measurements/new_model_commtime_2.csv')
     df['proc_count'] = np.square(df['pe_grid_size'])+1
-    df['commtime_percent'] = df['commtime'] / (df['runtime']+df['commtime'])
+    df['commcount'] = df['commcount']/100.0
+    df['commtime_percent'] = df['commcount'] / (df['runtime']+df['commcount'])
 
     plot(df, 'node_count', 'runtime', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
     plot(df, 'edge_percentage', 'runtime', False, False, "Proportion of Edges", "Execution Time (ms)", ylim=0.0)
     plot(df, 'proc_count', 'runtime', True, False, "Processor Count", "Execution Time (ms)", ylim=0.0)
-    plot(df, 'node_count', 'commtime_percent', True, False, "Node Count", "Communication Time (ms)", ylim=0.0)
+    plot(df, 'node_count', 'commcount', True, True, "Node Count", "Communication Time (ms)", ylim=0.0)
+    plot(df, 'node_count', 'commtime_percent', True, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
+
 
 if __name__ == "__main__":
     main()

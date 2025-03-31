@@ -38,8 +38,8 @@ public class FoxOttoMCU extends CodeBlock {
                 for(int j = 0; j < peGridSize; j++) {
                     pm.add_metrics(12, 1);
                     pm.set("sub", pm.get("padded_graph").extractMatrix(i*submatrix_dim,(i+1)*submatrix_dim,j*submatrix_dim,(j+1)*submatrix_dim).transpose());
-                    sm.set(String.format("%d_B",i*peGridSize+j+1), pm.get("sub"));
-                    communications.send_data(0,i*peGridSize+j+1, String.format("%d_B",i*peGridSize+j+1));
+                    // sm.set(String.format("%d_B",i*peGridSize+j+1), pm.get("sub"));
+                    communications.send_matrix(0,i*peGridSize+j+1, String.format("%d_B",i*peGridSize+j+1), pm.get("sub"), sm);
                 }
             }
             pm.add_metrics(0, 1);
@@ -48,12 +48,14 @@ public class FoxOttoMCU extends CodeBlock {
                 for (int i = 0; i < peGridSize; i++) {
                     pm.add_metrics(3,2);
                     pm.set("diagonal_submatrix", pm.get("padded_graph").extractMatrix(i*submatrix_dim, (i+1)*submatrix_dim, ((i+round)%peGridSize)*submatrix_dim, ((i+round)%peGridSize+1)*submatrix_dim));
-                    sm.set(String.format("%d_A",i), pm.get("diagonal_submatrix"));
+                    sm.set(String.format("%d_A_%d", i, round), pm.get("diagonal_submatrix"));
                     timer.pause();
                     for (int j = 0; j< peGridSize; j++) {
                         pm.add_metrics(10, 1);
                         communications.receive_data(i*peGridSize+j+1, 0);
-                        communications.send_data(0, i*peGridSize+j+1, String.format("%d_A",i));
+                        communications.send_data(0, i*peGridSize+j+1, String.format("%d_A_%d", i, round));
+                        // communications.send_matrix(0, i*peGridSize+j+1, String.format("%d_A",i), pm.get("diagonal_submatrix"), sm);
+
                     }
                     timer.resume();
                 }

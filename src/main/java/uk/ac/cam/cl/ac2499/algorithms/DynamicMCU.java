@@ -28,14 +28,15 @@ public class DynamicMCU extends CodeBlock {
                 this.communications.send_data(0, j+1, "from_node");
                 this.communications.send_data(0, j+1, "to_node");
                 this.communications.send_data(0, j+1, "old_weight");
-                sm.set(String.format("%d_dist", j+1), dist.getRow(i+j));
-                this.communications.send_data(0,j+1, String.format("%d_dist", j+1));
-                sm.set(String.format("%d_pred", j+1), pred.getRow(i+j));
-                this.communications.send_data(0,j+1, String.format("%d_pred", j+1));
+                // sm.set(String.format("%d_dist", j+1), dist.getRow(i+j));
+                this.communications.send_matrix(0,j+1, String.format("%d_dist", i+j), dist.getRow(i+j), sm);
+                // sm.set(String.format("%d_pred", j+1), pred.getRow(i+j));
+                this.communications.send_matrix(0,j+1, String.format("%d_pred", i+j), pred.getRow(i+j), sm);
             }
             long max_batch_time = -1;
             for (int j = 0; j < batch_size && i+j < graph_length; j++) {
                 pm.add_metrics(7, 1);
+                this.communications.receive_data(j+1,0);
                 this.communications.receive_data(j+1,0);
                 long pe_time = mm.get_long(String.format("%d", j+1));
                 if (pe_time > max_batch_time)

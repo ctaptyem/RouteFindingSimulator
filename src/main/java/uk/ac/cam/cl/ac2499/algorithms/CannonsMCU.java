@@ -40,10 +40,8 @@ public class CannonsMCU extends CodeBlock{
                     int pe_id = i*peGridSize+j+1;
                     pm.set("sub_A", padded_graph.extractMatrix(i*submatrix_dim,(i+1)*submatrix_dim,k*submatrix_dim,(k+1)*submatrix_dim));
                     pm.set("sub_B", padded_graph.extractMatrix(k*submatrix_dim,(k+1)*submatrix_dim,j*submatrix_dim,(j+1)*submatrix_dim));
-                    sm.set(String.format("%d_A_init",pe_id), pm.get("sub_A"));
-                    sm.set(String.format("%d_B_init",pe_id), pm.get("sub_B"));
-                    communications.send_data(0,pe_id, String.format("%d_A_init",pe_id));
-                    communications.send_data(0,pe_id, String.format("%d_B_init",pe_id));
+                    communications.send_matrix(0,pe_id, String.format("%d_A_init",pe_id), pm.get("sub_A"), sm);
+                    communications.send_matrix(0,pe_id, String.format("%d_B_init",pe_id), pm.get("sub_B"), sm);
                 }
             }
             timer.pause();

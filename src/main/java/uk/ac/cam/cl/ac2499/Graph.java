@@ -53,7 +53,7 @@ public class Graph {
 
         length = max_node_id;
         int edge_count = undirected ? 2 * data.size() : data.size();
-        this.descriptor_string = String.format("%d,%f,%b,null,null,null,null", length, edge_count/(length * length - length), undirected);
+        this.descriptor_string = String.format("%d,%f,%b,null,null,null,null", length, (float)edge_count/(length * length - length), undirected);
         adjacency = SimpleMatrix.filled(max_node_id+1, max_node_id+1, Double.POSITIVE_INFINITY);
         for (int i = 0; i <= max_node_id; i++) adjacency.set(i,i,0.0);
         for (Edge e : data) {

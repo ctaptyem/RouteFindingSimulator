@@ -103,8 +103,8 @@ public class Simulator {
 
     public void record_measurement(String outputName) throws IOException {
         FileWriter fw = new FileWriter(outputName, true);
-        // algorithm, peGridSize, node_count, edge_percent, undirected, weight_mean, weight_std, edge_seed, weight_seed, runtime, commtime, commcount, total_read, total_write
-        fw.write(String.format("%s,%d,%s,%d,%d,%d,%d,%d%n", algorithm.getClass().getSimpleName(), peGridSize, graph.get_descriptor(), metricMemory.get_long("runtime"), metricMemory.get_long("commtime"), communications.get_total_communications(), sharedMemory.total_read, sharedMemory.total_write));
+        // algorithm, peGridSize, node_count, edge_percent, undirected, weight_mean, weight_std, edge_seed, weight_seed, runtime, commtime, commcount, commvolume, total_read, total_write
+        fw.write(String.format("%s,%d,%s,%d,%d,%d,%d,%d,%d%n", algorithm.getClass().getSimpleName(), peGridSize, graph.get_descriptor(), metricMemory.get_long("runtime"), metricMemory.get_long("commtime"), communications.get_comm_count(), communications.get_comm_volume(), sharedMemory.total_read, sharedMemory.total_write));
         fw.close();
     }
 

@@ -44,11 +44,10 @@ public class DijkstraPE extends CodeBlock {
         }
 
         pm.add_metrics(3, 0);
-        sm.set(String.format("%d_dist", source), pm.get("dist"));
-        sm.set(String.format("%d_pred", source), pm.get("pred"));
         timer.pause();
         mm.set(String.format("%d", id), timer.get_time());
-        communications.send_data(id,0,String.format("%d", source));
+        communications.send_matrix(id,0,String.format("%d_dist", source), pm.get("dist"), sm);
+        communications.send_matrix(id,0,String.format("%d_pred", source), pm.get("pred"), sm);
     }
     
 }

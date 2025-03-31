@@ -56,14 +56,12 @@ public class CannonsPE extends CodeBlock{
             }
             
             pm.add_metrics(15, 2);
-            sm.set(String.format("%d_A_%d", A_next_id, num_iterations), A);
             // Send A submatrix to neighbor
-            communications.send_data(id, A_next_id, String.format("%d_A_%d", A_next_id, num_iterations));
+            communications.send_matrix(id, A_next_id, String.format("%d_A_%d", A_next_id, num_iterations), A, sm);
             // print("Sent A to neighbor");
 
-            sm.set(String.format("%d_B_%d", B_next_id, num_iterations), B);
             // Send B submatrix to neighbor
-            communications.send_data(id, B_next_id, String.format("%d_B_%d", B_next_id, num_iterations));
+            communications.send_matrix(id, B_next_id, String.format("%d_B_%d", B_next_id, num_iterations), B, sm);
             // print("Sent B to neighbor");
 
             // Receive new A submatrix from neighbor
@@ -116,11 +114,10 @@ public class CannonsPE extends CodeBlock{
         // // }
 
         pm.add_metrics(3, 0);
-        sm.set(String.format("%d_C",id), C);
         timer.pause();
         mm.set(String.format("%d_runtime", id), timer.get_time());
         mm.set(String.format("%d_commtime", id), communication_timer.get_time());
-        communications.send_data(id, 0, String.format("%d_C",id));
+        communications.send_matrix(id, 0, String.format("%d_C",id), C, sm);
         // print("Sent final C");
  
     }

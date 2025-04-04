@@ -37,12 +37,12 @@ public class DynamicTest extends GenericTest{
     //     return configs;
     // }
 
-    @Disabled
+    // @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testFiniteChange(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
         System.out.println(String.format("Starting test with config: [%d, %f, %d, %d, %d]", config[0], config[1]/10000.0, config[2], config[3], config[4]));
-        Graph g = new Graph(config[0],config[1]/10000.0,true,50.0,20.0,config[2],config[3]);
+        Graph g = new Graph(config[0],config[1]/10000.0,true,config[2],config[3]);
         int p = config[4];
         Simulator s;
         Memory sm = new Memory();
@@ -58,16 +58,17 @@ public class DynamicTest extends GenericTest{
         if (from_node == to_node)
             to_node = (from_node+1)%config[0];
         
-        double new_weight = Math.max(rand.nextGaussian(50.0, 20.0), 0.1);
-        sm.set("from_node", new SimpleMatrix(new double[][]{{from_node}}));
-        sm.set("to_node", new SimpleMatrix(new double[][]{{to_node}}));
-        sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from_node, to_node)}}));
-        g.update_edge(from_node, to_node, new_weight, false);
+        double percent_change = rand.nextDouble(0.1,1.9);
+        sm.set("from_node", from_node);
+        sm.set("to_node", to_node);
+        sm.set("new_weight", new SimpleMatrix(new double[]{percent_change * g.adjacency.get(from_node, to_node)}));
+        sm.set("undirected", 1);
+        // sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from_node, to_node)}}));
         s = new Simulator(p, g, new DynamicMCU(), sm);
         s.execute();
-        g.update_edge(to_node, from_node, new_weight, false);
-        sm.set("from_node", new SimpleMatrix(new double[][]{{to_node}}));
-        sm.set("to_node", new SimpleMatrix(new double[][]{{from_node}}));
+        
+        sm.set("from_node", to_node); //new SimpleMatrix(new double[][]{{to_node}})
+        sm.set("to_node", from_node);
         s = new Simulator(p, g, new DynamicMCU(), sm);
         s.execute();
 
@@ -82,11 +83,11 @@ public class DynamicTest extends GenericTest{
         double[][] mismatch_matrix = mismatch_percent(new SimpleMatrix[]{dijkstra_dist, dynamic_dist});
 
         if (!check_mismatch_matrix(mismatch_matrix))
-            throw new RuntimeException(String.format("Distance mismatch\n%sFrom: %d\nTo: %d\nWeight: %f\n%s", print_config(config), from_node, to_node, new_weight, print_mismatch_matrix(mismatch_matrix)));
+            throw new RuntimeException(String.format("Distance mismatch\n%sFrom: %d\nTo: %d\nChange: %f\n%s", print_config(config), from_node, to_node, percent_change, print_mismatch_matrix(mismatch_matrix)));
 
         mismatch_matrix = mismatch_percent(new SimpleMatrix[]{dijkstra_pred, dynamic_pred});
         if (!check_mismatch_matrix(mismatch_matrix))
-            throw new RuntimeException(String.format("Predecessor mismatch\n%sFrom: %d\nTo: %d\nWeight: %f\n%s", print_config(config), from_node, to_node, new_weight, print_mismatch_matrix(mismatch_matrix)));
+            throw new RuntimeException(String.format("Predecessor mismatch\n%sFrom: %d\nTo: %d\nChange: %f\n%s", print_config(config), from_node, to_node, percent_change, print_mismatch_matrix(mismatch_matrix)));
     }
 
 
@@ -96,7 +97,7 @@ public class DynamicTest extends GenericTest{
     void testInfiniteChange(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
         if (config[0] == 2) return;
         System.out.println(String.format("Starting test with config: [%d, %f, %d, %d, %d]", config[0], config[1]/10000.0, config[2], config[3], config[4]));
-        Graph g = new Graph(config[0],config[1]/10000.0,true,50.0,20.0,config[2],config[3]);
+        Graph g = new Graph(config[0],config[1]/10000.0,true,config[2],config[3]);
         int p = config[4];
         Simulator s;
         Memory sm = new Memory();
@@ -112,18 +113,18 @@ public class DynamicTest extends GenericTest{
         if (from_node == to_node)
             to_node = (from_node+1)%config[0];
         
-        double new_weight = Double.POSITIVE_INFINITY;
-        sm.set("from_node", new SimpleMatrix(new double[][]{{from_node}}));
-        sm.set("to_node", new SimpleMatrix(new double[][]{{to_node}}));
-        sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from_node, to_node)}}));
-        g.update_edge(from_node, to_node, new_weight, false);
+        double percent_change = Double.POSITIVE_INFINITY;
+        sm.set("from_node", from_node);
+        sm.set("to_node", to_node);
+        sm.set("percent_change", new SimpleMatrix(new double[]{percent_change * g.adjacency.get(from_node, to_node)}));
+        sm.set("undirected", 1);
+        // g.update_edge(from_node, to_node, percent_change, false);
         s = new Simulator(p, g, new DynamicMCU(), sm);
         s.execute();
-        g.update_edge(to_node, from_node, new_weight, false);
-        sm.set("from_node", new SimpleMatrix(new double[][]{{to_node}}));
-        sm.set("to_node", new SimpleMatrix(new double[][]{{from_node}}));
-        s = new Simulator(p, g, new DynamicMCU(), sm);
-        s.execute();
+        // sm.set("from_node", new SimpleMatrix(new double[][]{{to_node}}));
+        // sm.set("to_node", new SimpleMatrix(new double[][]{{from_node}}));
+        // s = new Simulator(p, g, new DynamicMCU(), sm);
+        // s.execute();
 
         SimpleMatrix dynamic_dist = s.get_shared_memory().get("output_dist");
         SimpleMatrix dynamic_pred = s.get_shared_memory().get("output_pred");
@@ -136,10 +137,10 @@ public class DynamicTest extends GenericTest{
         double[][] mismatch_matrix = mismatch_percent(new SimpleMatrix[]{dijkstra_dist, dynamic_dist});
 
         if (!check_mismatch_matrix(mismatch_matrix))
-            throw new RuntimeException(String.format("Distance mismatch\n%sFrom: %d\nTo: %d\nWeight: %f\n%s", print_config(config), from_node, to_node, new_weight, print_mismatch_matrix(mismatch_matrix)));
+            throw new RuntimeException(String.format("Distance mismatch\n%sFrom: %d\nTo: %d\nChange: %f\n%s", print_config(config), from_node, to_node, percent_change, print_mismatch_matrix(mismatch_matrix)));
 
         mismatch_matrix = mismatch_percent(new SimpleMatrix[]{dijkstra_pred, dynamic_pred});
         if (!check_mismatch_matrix(mismatch_matrix))
-            throw new RuntimeException(String.format("Predecessor mismatch\n%sFrom: %d\nTo: %d\nWeight: %f\n%s", print_config(config), from_node, to_node, new_weight, print_mismatch_matrix(mismatch_matrix)));
+            throw new RuntimeException(String.format("Predecessor mismatch\n%sFrom: %d\nTo: %d\nChange: %f\n%s", print_config(config), from_node, to_node, percent_change, print_mismatch_matrix(mismatch_matrix)));
     }
 }

@@ -10,11 +10,13 @@ public class Memory {
     long total_write;
     ConcurrentHashMap<String, Long> long_store;
     ConcurrentHashMap<String, Boolean> written_and_not_read;
+    ConcurrentHashMap<String, Graph> graph_store;
 
     
     public Memory() {
         matrix_store = new ConcurrentHashMap<>();
         long_store = new ConcurrentHashMap<>();
+        graph_store = new ConcurrentHashMap<>();
         written_and_not_read = new ConcurrentHashMap<>();
         total_read = 0;
         total_write = 0;

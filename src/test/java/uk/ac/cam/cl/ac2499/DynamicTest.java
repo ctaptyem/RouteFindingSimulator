@@ -66,11 +66,6 @@ public class DynamicTest extends GenericTest{
         // sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from_node, to_node)}}));
         s = new Simulator(p, g, new DynamicMCU(), sm);
         s.execute();
-        
-        sm.set("from_node", to_node); //new SimpleMatrix(new double[][]{{to_node}})
-        sm.set("to_node", from_node);
-        s = new Simulator(p, g, new DynamicMCU(), sm);
-        s.execute();
 
         SimpleMatrix dynamic_dist = s.get_shared_memory().get("output_dist");
         SimpleMatrix dynamic_pred = s.get_shared_memory().get("output_pred");
@@ -116,7 +111,7 @@ public class DynamicTest extends GenericTest{
         double percent_change = Double.POSITIVE_INFINITY;
         sm.set("from_node", from_node);
         sm.set("to_node", to_node);
-        sm.set("percent_change", new SimpleMatrix(new double[]{percent_change * g.adjacency.get(from_node, to_node)}));
+        sm.set("new_weight", new SimpleMatrix(new double[]{percent_change * g.adjacency.get(from_node, to_node)}));
         sm.set("undirected", 1);
         // g.update_edge(from_node, to_node, percent_change, false);
         s = new Simulator(p, g, new DynamicMCU(), sm);

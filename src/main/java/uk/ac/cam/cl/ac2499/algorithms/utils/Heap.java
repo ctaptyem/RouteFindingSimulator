@@ -1,4 +1,6 @@
-package uk.ac.cam.cl.ac2499;
+package uk.ac.cam.cl.ac2499.algorithms.utils;
+
+import uk.ac.cam.cl.ac2499.simulator.Memory;
 
 public class Heap {
     public static void heap_insert(int new_value, String pq, int pq_size, Memory pm, Memory sm) {

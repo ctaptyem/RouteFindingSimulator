@@ -1,8 +1,9 @@
-package uk.ac.cam.cl.ac2499.algorithms;
+package uk.ac.cam.cl.ac2499.algorithms.FoxOtto;
 
 import org.ejml.simple.SimpleMatrix;
 
-import uk.ac.cam.cl.ac2499.Timer;
+import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class FoxOttoPE extends CodeBlock{
     

@@ -1,8 +1,10 @@
-package uk.ac.cam.cl.ac2499.algorithms;
+package uk.ac.cam.cl.ac2499.algorithms.Dynamic;
 
 import org.ejml.simple.SimpleMatrix;
 
-import uk.ac.cam.cl.ac2499.Timer;
+import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+import uk.ac.cam.cl.ac2499.algorithms.Shutdown;
+import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class DynamicMCU extends CodeBlock {
     public void update_edge(Timer timer, Timer communication_timer, int graph_length, int batch_size, SimpleMatrix dist, SimpleMatrix pred, int from_node, int to_node, double weight_change, double new_weight) {

@@ -1,9 +1,10 @@
-package uk.ac.cam.cl.ac2499.algorithms;
+package uk.ac.cam.cl.ac2499.algorithms.Dijkstra;
 
 import org.ejml.simple.SimpleMatrix;
 
-import uk.ac.cam.cl.ac2499.Heap;
-import uk.ac.cam.cl.ac2499.Timer;
+import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+import uk.ac.cam.cl.ac2499.algorithms.utils.Heap;
+import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class DijkstraPE extends CodeBlock {
 

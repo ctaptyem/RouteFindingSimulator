@@ -1,15 +1,16 @@
 from pathlib import Path
 from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
 import pandas as pd
 import numpy as np
 
-def plot(output_dir:Path, df: pd.DataFrame, x_col: str, y_col: str, log_x: bool, log_y: bool, x_name: str = None, y_name: str = None, ylim: float = None):
+def plot_on_axes(ax: Axes, df: pd.DataFrame, x_col: str, y_col: str, title: str, log_x: bool, log_y: bool, x_name: str = None, y_name: str = None, ylim: float = None):
     # df['commtime_percent'] = df['commtime'] / df['runtime']
     if not x_name: x_name = x_col
     if not y_name: y_name = y_col
 
-    fig, ax = plt.subplots(figsize=(12, 8))
-    fig.suptitle(f"{y_name} for varied {x_name}")
+    # fig, ax = plt.subplots(figsize=(12, 8))
+    ax.set_title(title)
     ax.set_xlabel(f"{x_name} {'(log scale)' if log_x else ''}")
     ax.set_ylabel(f"{y_name} {'(log scale)' if log_y else ''}")
 
@@ -31,7 +32,7 @@ def plot(output_dir:Path, df: pd.DataFrame, x_col: str, y_col: str, log_x: bool,
                     alpha=0.1)
 
     ax.grid(True, linestyle='--', alpha=0.7)
-    ax.legend(title='Algorithm', fontsize=14, title_fontsize=14)
+    # ax.legend(title='Algorithm', fontsize=14, title_fontsize=14)
 
     if log_x: ax.set_xscale("log")
     if log_y: ax.set_yscale("log")
@@ -45,6 +46,19 @@ def plot(output_dir:Path, df: pd.DataFrame, x_col: str, y_col: str, log_x: bool,
     if ylim is not None and not log_y:
         ax.set_ylim(ylim)
 
+    # plt.tight_layout()
+    # plt.savefig(output_dir / f'{y_col}_vs_{x_col}.png', dpi=300, bbox_inches='tight')
+
+def make_figure(output_dir: Path, df: pd.DataFrame, x_col: str, y_col: str, log_x: bool, log_y: bool, x_name: str = None, y_name: str = None, ylim: float = None, fig_dims: tuple[int, int] = (1,1), split_col: str = None):
+    fig, axes = plt.subplots(figsize=(12, 8), nrows=fig_dims[0], ncols=fig_dims[1])
+    if split_col:
+        for idx, (name, group) in enumerate(df.groupby(split_col)):
+            title = f"{y_name if y_name else y_col} for varied {x_name if x_name else x_col} with {split_col}={name}"
+            plot_on_axes(axes[idx//fig_dims[1], idx%fig_dims[1]], group, x_col, y_col, title, log_x, log_y, x_name, y_name, ylim)
+    else:
+        title = f"{y_name if y_name else y_col} for varied {x_name if x_name else x_col}"
+        plot_on_axes(axes, df, x_col, y_col, title, log_x, log_y, x_name, y_name, ylim)
+    fig.legend()
     plt.tight_layout()
     plt.savefig(output_dir / f'{y_col}_vs_{x_col}.png', dpi=300, bbox_inches='tight')
 
@@ -57,21 +71,25 @@ def plot_all(measurement_file_name: str):
         file_df['edge_update_type'] = file.name[:-4]
         dfs.append(file_df)
     df = pd.concat(dfs)
+    df = df[df['pe_grid_size'] == 4]
     df['proc_count'] = np.square(df['pe_grid_size'])+1
-    df['comm_estimate_ns'] = (df['commcount']*100 + df['commvolume']*10)/1e9
-    df['runtime_ns'] = df['runtime']/1000
-    df['commtime_percent'] = (df['comm_estimate_ns']) / (df['runtime_ns']+df['comm_estimate_ns'])
+    df['comm_estimate'] = (df['commcount']*100 + df['commvolume']*10)/1e9
+    df['runtime'] = df['runtime']/1000
+    df['total_time'] = df['runtime']+df['comm_estimate']
+    df['commtime_percent'] = (df['comm_estimate']) / (df['total_time'])
 
     output_dir = Path.cwd() / Path("plots") / measurement_file_name
     Path.mkdir(output_dir, parents=True, exist_ok=True)
 
 
-    plot(output_dir, df, 'node_count', 'runtime', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
-    plot(output_dir, df, 'edge_percentage', 'runtime', False, False, "Proportion of Edges", "Execution Time (ms)", ylim=0.0)
-    plot(output_dir, df, 'proc_count', 'runtime', True, False, "Processor Count", "Execution Time (ms)", ylim=0.0)
-    plot(output_dir, df, 'node_count', 'commcount', True, True, "Node Count", "Communication Time (ms)", ylim=0.0)
-    plot(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
-    plot(output_dir, df, 'proc_count', 'commtime_percent', False, False, "Processor Count", "Percent of time spent communicating (%)", ylim=0.0)
+    # make_figure(output_dir, df, 'node_count', 'runtime', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
+    # make_figure(output_dir, df, 'node_count', 'total_time', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
+    # make_figure(output_dir, df, 'edge_percentage', 'runtime', False, False, "Proportion of Edges", "Execution Time (ms)", ylim=0.0)
+    # make_figure(output_dir, df, 'proc_count', 'runtime', True, False, "Processor Count", "Execution Time (ms)", ylim=0.0)
+    make_figure(output_dir, df, 'node_count', 'comm_estimate', True, True, "Node Count", "Communication Time (ms)", ylim=0.0)
+    make_figure(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
+    # make_figure(output_dir, df, 'proc_count', 'commtime_percent', False, False, "Processor Count", "Percent of time spent communicating (%)", ylim=0.0)
+    # make_figure(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
 
 def explore_dataset():
     df = pd.read_csv('/home/andrei/Dev/RouteFindingSimulator/testing/input/OL.cedge', delimiter=' ')

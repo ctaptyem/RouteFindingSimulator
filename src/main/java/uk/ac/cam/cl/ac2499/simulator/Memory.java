@@ -1,8 +1,10 @@
-package uk.ac.cam.cl.ac2499;
+package uk.ac.cam.cl.ac2499.simulator;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.ejml.simple.SimpleMatrix;
+
+import uk.ac.cam.cl.ac2499.Graph;
 
 public class Memory {
     ConcurrentHashMap<String, SimpleMatrix> matrix_store;

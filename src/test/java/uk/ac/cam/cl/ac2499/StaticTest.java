@@ -10,9 +10,11 @@ import java.util.concurrent.ExecutionException;
 
 import org.ejml.simple.SimpleMatrix;
 
-import uk.ac.cam.cl.ac2499.algorithms.CannonsMCU;
-import uk.ac.cam.cl.ac2499.algorithms.DijkstraMCU;
-import uk.ac.cam.cl.ac2499.algorithms.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Cannons.CannonsMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Dijkstra.DijkstraMCU;
+import uk.ac.cam.cl.ac2499.algorithms.FoxOtto.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.simulator.Memory;
+import uk.ac.cam.cl.ac2499.simulator.Simulator;
 
 
 public class StaticTest extends GenericTest{
@@ -56,7 +58,7 @@ public class StaticTest extends GenericTest{
         }
     }
 
-    @Disabled
+    // @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testAllMatch(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {

@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.ac2499;
+package uk.ac.cam.cl.ac2499.algorithms.utils;
 
 public class Timer {
     long current_total;

@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import uk.ac.cam.cl.ac2499.algorithms.CannonsMCU;
-import uk.ac.cam.cl.ac2499.algorithms.DijkstraMCU;
-import uk.ac.cam.cl.ac2499.algorithms.DynamicMCU;
-import uk.ac.cam.cl.ac2499.algorithms.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Cannons.CannonsMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Dijkstra.DijkstraMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Dynamic.DynamicMCU;
+import uk.ac.cam.cl.ac2499.algorithms.FoxOtto.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.simulator.Memory;
+import uk.ac.cam.cl.ac2499.simulator.Simulator;
 
 import java.util.Random;
 
@@ -37,7 +39,7 @@ public class DynamicTest extends GenericTest{
     //     return configs;
     // }
 
-    // @Disabled
+    @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testFiniteChange(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {

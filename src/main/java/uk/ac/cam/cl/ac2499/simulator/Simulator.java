@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.ac2499;
+package uk.ac.cam.cl.ac2499.simulator;
 
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -8,6 +8,7 @@ import java.util.concurrent.*;
 
 import org.ejml.simple.SimpleMatrix;
 
+import uk.ac.cam.cl.ac2499.Graph;
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 
 public class Simulator {

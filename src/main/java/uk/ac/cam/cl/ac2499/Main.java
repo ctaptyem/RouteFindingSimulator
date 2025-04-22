@@ -14,11 +14,13 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.ejml.simple.SimpleMatrix;
 
-import uk.ac.cam.cl.ac2499.algorithms.CannonsMCU;
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
-import uk.ac.cam.cl.ac2499.algorithms.DijkstraMCU;
-import uk.ac.cam.cl.ac2499.algorithms.DynamicMCU;
-import uk.ac.cam.cl.ac2499.algorithms.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Cannons.CannonsMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Dijkstra.DijkstraMCU;
+import uk.ac.cam.cl.ac2499.algorithms.Dynamic.DynamicMCU;
+import uk.ac.cam.cl.ac2499.algorithms.FoxOtto.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.simulator.Memory;
+import uk.ac.cam.cl.ac2499.simulator.Simulator;
 
 
 public class Main {
@@ -96,21 +98,6 @@ public class Main {
         // SimpleMatrix dijkstra_dist = sm.get("output_dist");
         // SimpleMatrix dijkstra_pred = s.get_shared_memory().get("output_pred");
 
-    }
-    
-    public static void run_matmul() throws IOException, ExecutionException, InterruptedException {
-        Graph g = new Graph("zerod_example_2.txt", false);
-        System.out.println(g.adjacency);
-        ExecutorService ex = Executors.newSingleThreadExecutor();
-        Memory mem = new Memory();
-        mem.set("A", g.adjacency);
-        mem.set("B", g.adjacency);
-        ProcessingElement pe = new ProcessingElement(0, mem, mem, new CommunicationManager(1));
-        CodeBlock algo = new MatMulPE();
-        pe.code = algo;
-        ex.submit(pe).get();
-        System.out.println(mem.get("C"));
-        ex.shutdown();
     }
     
     public static void execute_with_arguments(String[] args) throws IOException, ExecutionException, InterruptedException {

@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.ac2499;
+package uk.ac.cam.cl.ac2499.simulator;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 

@@ -19,7 +19,7 @@ import uk.ac.cam.cl.ac2499.simulator.Simulator;
 
 public class StaticTest extends GenericTest{
 
-    @Disabled
+    // @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testInfiniteMatches(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {

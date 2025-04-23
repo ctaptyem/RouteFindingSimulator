@@ -7,12 +7,10 @@ import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 
-public class CommunicationManager {
+public class CommunicationManager implements CommunicationInterface{
     LinkedBlockingQueue<String>[][] data_link;
     BlockingQueue<CodeBlock>[] instruction_link;
     int num_processors;
-    long comm_count;
-    long comm_volume;
     
     public CommunicationManager(int processorCount) {
         this.num_processors = processorCount;
@@ -23,13 +21,10 @@ public class CommunicationManager {
                 this.data_link[i][j] = new LinkedBlockingQueue<String>();
             this.instruction_link[i] = new LinkedBlockingQueue<CodeBlock>();
         }
-        this.comm_count = 0;
-        this.comm_volume = 0;
     }
     
     public void send_data(int source, int destination, String data) {
         this.data_link[source][destination].offer(data);
-        comm_count++;
     }
 
     // public void send_data(int source, int destination, String data, long size) {
@@ -39,8 +34,6 @@ public class CommunicationManager {
 
     public void send_matrix(int source, int destination, String data, SimpleMatrix matrix, Memory sm) {
         sm.set(data, matrix);
-        comm_count++;
-        comm_volume += matrix.getNumElements();
         this.data_link[source][destination].offer(data);
     }
 
@@ -60,11 +53,5 @@ public class CommunicationManager {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-    public long get_comm_count() {
-        return comm_count;
-    }
-    public long get_comm_volume() {
-        return comm_volume;
     }
 }

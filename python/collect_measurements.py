@@ -62,7 +62,8 @@ def get_command_to_run(output_file: Path, pe_grid_size: int, algorithm: str, edg
     return command
     
 
-def run_static_experiments(output_file: Path, graph_configs: dict[str, Iterable[int|float]], simulator_configs: dict[str, Iterable[int|str]]):
+def run_static_experiments(output_path: Path, graph_configs: dict[str, Iterable[int|float]], simulator_configs: dict[str, Iterable[int|str]]):
+    output_file = output_path / "data.csv"
     with open(output_file, 'w') as outfile:
         outfile.write("algorithm,pe_grid_size,node_count,edge_percentage,undirected,edge_seed,weight_seed,runtime,commtime,commcount,commvolume,total_read,total_write\n")
     progress = 0
@@ -132,22 +133,23 @@ def run_all_dynamic_experiments(output_path: Path, output_name:str, graph_config
 
 
 def main():
-    output_name = "first_dynamic"
+    output_name = "metric_test"
 
     graph_configs = {
-        "node_counts": np.round(10 * (2 ** np.linspace(0, 5, 14))).astype(int), #[10,40,160,640]
+        "node_counts": np.round(10 * (2 ** np.linspace(0, 4, 8))).astype(int), #np.round(10 * (2 ** np.linspace(0, 5, 14))).astype(int),
         "edge_props": np.round(np.linspace(0.05,0.95,5),5), # [0.1, 0.3, 0.5, 0.7, 0.9]
         "random_seeds": [[73, 6135], [8804, 1854], [8224, 2195], ]#[480, 5607], [5764, 4112], [722, 2905], [4776, 3417], [6117, 6371], [9242, 7314], [4399, 4691]],
     }
     simulator_configs = {
-        "pe_grid_sizes": 2 ** np.linspace(0,4,5, dtype=int), #[1,2,4,8,16]
+        "pe_grid_sizes": [1,2,4],#2 ** np.linspace(0,4,5, dtype=int), #[1,2,4,8,16]
         "algorithms": ['dijkstra', 'foxotto', 'cannons', 'dynamic']
     }
 
     output_path = Path(f"/home/andrei/Dev/RouteFindingSimulator/measurements/{output_name}/")
     Path.mkdir(output_path, parents=True, exist_ok=True)
 
-    run_all_dynamic_experiments(output_path, output_name, graph_configs, simulator_configs)
+    run_static_experiments(output_path, graph_configs, simulator_configs)
+    # run_all_dynamic_experiments(output_path, output_name, graph_configs, simulator_configs)
 
 if __name__ == "__main__":
     main()

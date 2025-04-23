@@ -4,14 +4,13 @@ import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 import uk.ac.cam.cl.ac2499.algorithms.Shutdown;
-import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class FoxOttoMCU extends CodeBlock {
 
     public void run() {
-        Timer timer = new Timer();
-        Timer communication_timer = new Timer();
-        timer.resume();
+        // Timer timer = new Timer();
+        // Timer communication_timer = new Timer();
+        // timer.resume();
         pm.add_metrics(6, 2);
         pm.set("graph", sm.get("graph"));
         int dim = pm.get("graph").getNumRows();
@@ -51,7 +50,7 @@ public class FoxOttoMCU extends CodeBlock {
                     pm.add_metrics(3,2);
                     pm.set("diagonal_submatrix", pm.get("padded_graph").extractMatrix(i*submatrix_dim, (i+1)*submatrix_dim, ((i+round)%peGridSize)*submatrix_dim, ((i+round)%peGridSize+1)*submatrix_dim));
                     sm.set(String.format("%d_A_%d", i, round), pm.get("diagonal_submatrix"));
-                    timer.pause();
+                    // timer.pause();
                     for (int j = 0; j< peGridSize; j++) {
                         pm.add_metrics(10, 1);
                         communications.receive_data(i*peGridSize+j+1, 0);
@@ -59,14 +58,14 @@ public class FoxOttoMCU extends CodeBlock {
                         // communications.send_matrix(0, i*peGridSize+j+1, String.format("%d_A",i), pm.get("diagonal_submatrix"), sm);
 
                     }
-                    timer.resume();
+                    // timer.resume();
                 }
                 System.out.printf("FoxOtto: [%s%s]\r", "#".repeat((int) (((double)(num_iterations*peGridSize+round)/(max_iterations*peGridSize))*80)), "-".repeat((int) ((1.0 - (double)(num_iterations*peGridSize+round)/(max_iterations*peGridSize))*80)));
             }
-            timer.pause();
+            // timer.pause();
             // SimpleMatrix padded_result = new SimpleMatrix(submatrix_dim * peGridSize, submatrix_dim * peGridSize);
-            long max_batch_time = -1;
-            long total_comm_time = 0;
+            // long max_batch_time = -1;
+            // long total_comm_time = 0;
             pm.add_metrics(0, 1);
             for (int i = 0; i < peGridSize; i++) {
                 pm.add_metrics(3, 2);
@@ -74,16 +73,16 @@ public class FoxOttoMCU extends CodeBlock {
                     pm.add_metrics(10, 1);
                     pm.set("sub", sm.get(communications.receive_data(i*peGridSize+j+1, 0)));
                     pm.get("padded_graph").insertIntoThis(i*submatrix_dim, j*submatrix_dim, pm.get("sub"));
-                    long pe_time = mm.get_long(String.format("%d_runtime", i*peGridSize+j+1));
-                    total_comm_time += mm.get_long(String.format("%d_commtime", i*peGridSize+j+1));
-                    if (pe_time > max_batch_time)
-                        max_batch_time = pe_time;
+                    // long pe_time = mm.get_long(String.format("%d_runtime", i*peGridSize+j+1));
+                    // total_comm_time += mm.get_long(String.format("%d_commtime", i*peGridSize+j+1));
+                    // if (pe_time > max_batch_time)
+                    //     max_batch_time = pe_time;
                 }
             }
             // if (num_iterations == 1) System.out.println(pm.get("padded_graph"));
-            timer.add_time(max_batch_time);
-            communication_timer.add_time((long) (total_comm_time / (peGridSize * peGridSize)));
-            timer.resume();
+            // timer.add_time(max_batch_time);
+            // communication_timer.add_time((long) (total_comm_time / (peGridSize * peGridSize)));
+            // timer.resume();
         }
 
         pm.add_metrics(2, 1);
@@ -93,9 +92,9 @@ public class FoxOttoMCU extends CodeBlock {
             pm.add_metrics(4, 1);
             communications.send_instruction(i, new Shutdown());
         }
-        timer.pause();
-        mm.set("runtime", timer.get_time());
-        mm.set("commtime", communication_timer.get_time());
+        // timer.pause();
+        // mm.set("runtime", timer.get_time());
+        // mm.set("commtime", communication_timer.get_time());
         System.out.printf("FoxOtto: [%s]%n","#".repeat(80));
         communications.send_instruction(0, new Shutdown());
     }

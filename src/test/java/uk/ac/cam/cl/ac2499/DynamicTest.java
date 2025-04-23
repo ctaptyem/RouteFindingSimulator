@@ -39,7 +39,7 @@ public class DynamicTest extends GenericTest{
     //     return configs;
     // }
 
-    @Disabled
+    // @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testFiniteChange(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
@@ -88,7 +88,7 @@ public class DynamicTest extends GenericTest{
     }
 
 
-    @Disabled
+    // @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testInfiniteChange(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {

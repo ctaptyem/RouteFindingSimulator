@@ -4,20 +4,19 @@ import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 import uk.ac.cam.cl.ac2499.algorithms.Shutdown;
-import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class DijkstraMCU extends CodeBlock {
     public void run() {
-        Timer timer = new Timer();
-        Timer communication_timer = new Timer();
-        timer.resume();
+        // Timer timer = new Timer();
+        // Timer communication_timer = new Timer();
+        // timer.resume();
         pm.add_metrics(6, 2);
         pm.set("graph", sm.get("graph"));
         int graph_length = pm.get("graph").getNumCols();
         int batch_size = peGridSize * peGridSize;
         pm.set("path_dists", new SimpleMatrix(graph_length, graph_length));
         pm.set("path_preds", new SimpleMatrix(graph_length, graph_length));
-        timer.pause();
+        // timer.pause();
 
         pm.add_metrics(0, 1);
         for (int i = 0; i < graph_length; i+=batch_size) {
@@ -30,20 +29,20 @@ public class DijkstraMCU extends CodeBlock {
                 this.communications.send_data(0, j+1, String.format("%d", i+j));
                 this.communications.send_data(0,j+1,"graph");
             }
-            long max_batch_time = -1;
+            // long max_batch_time = -1;
             for (int j = 0; j < batch_size && i+j < graph_length; j++) {
                 pm.add_metrics(7, 1);
                 // communication_timer.resume();
                 this.communications.receive_data(j+1,0);
                 this.communications.receive_data(j+1,0);
                 // communication_timer.pause();
-                long pe_time = mm.get_long(String.format("%d", j+1));
-                if (pe_time > max_batch_time)
-                    max_batch_time = pe_time;
+                // long pe_time = mm.get_long(String.format("%d", j+1));
+                // if (pe_time > max_batch_time)
+                //     max_batch_time = pe_time;
             }
-            timer.add_time(max_batch_time);
+            // timer.add_time(max_batch_time);
         }
-        timer.resume();
+        // timer.resume();
 
         for (int j = 0; j < batch_size; j++) {
             communications.send_instruction(j+1,new Shutdown());
@@ -58,9 +57,9 @@ public class DijkstraMCU extends CodeBlock {
 
         sm.set("output_dist", pm.get("path_dists"));
         sm.set("output_pred", pm.get("path_preds"));
-        timer.pause();
-        mm.set("runtime", timer.get_time());
-        mm.set("commtime", communication_timer.get_time());
+        // timer.pause();
+        // mm.set("runtime", timer.get_time());
+        // mm.set("commtime", communication_timer.get_time());
         System.out.printf("Dijkstra: [%s]%n","#".repeat(80));
         communications.send_instruction(0,new Shutdown());
     }

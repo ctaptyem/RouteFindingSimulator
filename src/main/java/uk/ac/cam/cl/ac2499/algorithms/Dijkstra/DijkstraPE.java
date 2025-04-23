@@ -4,13 +4,12 @@ import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 import uk.ac.cam.cl.ac2499.algorithms.utils.Heap;
-import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class DijkstraPE extends CodeBlock {
 
     public void run() {
-        Timer timer = new Timer();
-        timer.resume();
+        // Timer timer = new Timer();
+        // timer.resume();
         pm.add_metrics(9,3);
         int source = Integer.parseInt(communications.receive_data(0, id));
         pm.set("graph", sm.get(communications.receive_data(0,id)));
@@ -45,8 +44,8 @@ public class DijkstraPE extends CodeBlock {
         }
 
         pm.add_metrics(3, 0);
-        timer.pause();
-        mm.set(String.format("%d", id), timer.get_time());
+        // timer.pause();
+        // mm.set(String.format("%d", id), timer.get_time());
         communications.send_matrix(id,0,String.format("%d_dist", source), pm.get("dist"), sm);
         communications.send_matrix(id,0,String.format("%d_pred", source), pm.get("pred"), sm);
     }

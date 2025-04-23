@@ -3,17 +3,16 @@ package uk.ac.cam.cl.ac2499.algorithms.Cannons;
 import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
-import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class CannonsPE extends CodeBlock{
     public void run() {
-        Timer timer = new Timer();
-        Timer communication_timer = new Timer();
+        // Timer timer = new Timer();
+        // Timer communication_timer = new Timer();
         pm.add_metrics(5,1);
         SimpleMatrix A =  sm.get(communications.receive_data(0,id));
         SimpleMatrix B =  sm.get(communications.receive_data(0,id));
 
-        timer.resume();
+        // timer.resume();
         int dim = A.getNumRows();
         // pm.set("C", new SimpleMatrix(dim, dim));
         SimpleMatrix C = SimpleMatrix.filled(dim ,dim, Double.POSITIVE_INFINITY);
@@ -66,16 +65,16 @@ public class CannonsPE extends CodeBlock{
             // print("Sent B to neighbor");
 
             // Receive new A submatrix from neighbor
-            timer.pause();
-            communication_timer.resume();
+            // timer.pause();
+            // communication_timer.resume();
             A = sm.get(communications.receive_data(A_prev_id, id));
             // print("Received new A");
 
             // Receive new B submatrix from neighbor
             B = sm.get(communications.receive_data(B_prev_id, id));
-            communication_timer.pause();
-            // print("Received new B");
-            timer.resume();
+            // communication_timer.pause();
+            // // print("Received new B");
+            // timer.resume();
 
             // if (id == 2) {
             //     System.out.println("AAAAAAAAAAAAAAAAAAAAA");
@@ -115,9 +114,9 @@ public class CannonsPE extends CodeBlock{
         // // }
 
         pm.add_metrics(3, 0);
-        timer.pause();
-        mm.set(String.format("%d_runtime", id), timer.get_time());
-        mm.set(String.format("%d_commtime", id), communication_timer.get_time());
+        // timer.pause();
+        // mm.set(String.format("%d_runtime", id), timer.get_time());
+        // mm.set(String.format("%d_commtime", id), communication_timer.get_time());
         communications.send_matrix(id, 0, String.format("%d_C",id), C, sm);
         // print("Sent final C");
  

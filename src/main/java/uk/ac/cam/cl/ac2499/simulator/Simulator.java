@@ -19,7 +19,7 @@ public class Simulator {
     ProcessingElement[][] processors;
     ProcessingElement MCU;
     Memory sharedMemory;
-    Memory metricMemory;
+    // Memory metricMemory;
     CommunicationManager communications;
     
     public Simulator(int peGridSize, Graph input, CodeBlock algorithm, Memory sharedMemory) {
@@ -28,13 +28,13 @@ public class Simulator {
         this.processorCount = peGridSize * peGridSize + 1;
         this.processors = new ProcessingElement[peGridSize][peGridSize];
         this.sharedMemory = sharedMemory;
-        this.metricMemory = new Memory();
+        // this.metricMemory = new Memory();
         this.communications = new CommunicationManager(processorCount);
-        this.MCU = new ProcessingElement(0, sharedMemory, metricMemory, communications);
+        this.MCU = new ProcessingElement(0, sharedMemory, communications);
         this.algorithm = algorithm;
         for (int i = 0; i < peGridSize; i++) {
             for (int j = 0; j < peGridSize; j++) {
-                this.processors[i][j] = new ProcessingElement(i * peGridSize + j + 1, sharedMemory, metricMemory, communications);
+                this.processors[i][j] = new ProcessingElement(i * peGridSize + j + 1, sharedMemory, communications);
             }
         }
         this.algorithm.peGridSize = this.peGridSize;
@@ -61,6 +61,14 @@ public class Simulator {
         peExecutor.shutdown();
     }
 
+    public long[] extract_metrics() {
+        long runtime = MetricTracker.get_log_sum(MCU.metric_tracker.runtime_log);
+        long comm_count = MetricTracker.get_log_sum(MCU.metric_tracker.comm_count_log);
+        long comm_volume = MetricTracker.get_log_sum(MCU.metric_tracker.comm_volume_log);
+        long[] PE_metrics = MetricTracker.process_metrics(processors);
+        return new long[]{PE_metrics[0]+runtime, PE_metrics[1]+comm_count, PE_metrics[2]+comm_volume};
+    }
+
     public void process_output(String outputName) throws FileNotFoundException {
         String outputFileName = String.format("testing/output/output-%s.csv", outputName);
         String logFileName = String.format("testing/output/log-%s.txt", outputName);
@@ -68,7 +76,7 @@ public class Simulator {
         PrintWriter pw_out = new PrintWriter(outputFileName);
         PrintWriter pw_log = new PrintWriter(logFileName);
 
-        pw_log.print(String.format("%d ms of estimated execution time%n", metricMemory.get_long("runtime")));
+        // pw_log.print(String.format("%d ms of estimated execution time%n", metricMemory.get_long("runtime")));
         pw_log.println();
         pw_log.print(String.format("%d values read, %d values written to shared memory%n", sharedMemory.total_read, sharedMemory.total_write));
         pw_log.println();
@@ -104,8 +112,19 @@ public class Simulator {
 
     public void record_measurement(String outputName) throws IOException {
         FileWriter fw = new FileWriter(outputName, true);
+        long[] metrics = extract_metrics();
         // algorithm, peGridSize, node_count, edge_percent, undirected, edge_seed, weight_seed, runtime, commtime, commcount, commvolume, total_read, total_write
-        fw.write(String.format("%s,%d,%s,%d,%d,%d,%d,%d,%d%n", algorithm.getClass().getSimpleName(), peGridSize, graph.get_descriptor(), metricMemory.get_long("runtime"), metricMemory.get_long("commtime"), communications.get_comm_count(), communications.get_comm_volume(), sharedMemory.total_read, sharedMemory.total_write));
+        fw.write(String.format("%s,%d,%s,%d,%d,%d,%d,%d%n", 
+            algorithm.getClass().getSimpleName(), 
+            peGridSize, 
+            graph.get_descriptor(), 
+            metrics[0], 
+            // metricMemory.get_long("commtime"), 
+            metrics[1], 
+            metrics[2], 
+            sharedMemory.total_read, 
+            sharedMemory.total_write)
+        );
         fw.close();
     }
 

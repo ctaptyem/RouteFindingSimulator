@@ -4,12 +4,11 @@ import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 import uk.ac.cam.cl.ac2499.algorithms.utils.Heap;
-import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class DynamicPE extends CodeBlock {
     public void run() {
-        Timer timer = new Timer();
-        timer.resume();
+        // Timer timer = new Timer();
+        // timer.resume();
         int source = Integer.parseInt(communications.receive_data(0, id));
         pm.set("graph", sm.get(communications.receive_data(0,id)));
         int graph_length = pm.get("graph").getNumCols();
@@ -139,8 +138,8 @@ public class DynamicPE extends CodeBlock {
         // pm.add_metrics(3, 0);
         // sm.set(String.format("%d_dist", source), pm.get("dist"));
         // sm.set(String.format("%d_pred", source), pm.get("pred"));
-        timer.pause();
-        mm.set(String.format("%d", id), timer.get_time());
+        // timer.pause();
+        // mm.set(String.format("%d", id), timer.get_time());
         // communications.send_data(id,0,String.format("%d", source));
         communications.send_matrix(id,0,String.format("%d_dist", source), pm.get("dist"), sm);
         communications.send_matrix(id,0,String.format("%d_pred", source), pm.get("pred"), sm);

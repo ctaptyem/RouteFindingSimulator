@@ -28,7 +28,7 @@ public class Main {
     public static void run_simulator() throws IOException, ExecutionException, InterruptedException {
         // Graph g = new Graph("testing/input/zerod_example_2.txt", true); //new Graph("testing/input/OL.cedge");
         // Graph g = new Graph(200,0.75,true,50.0,20.0,9063,3609);
-        Graph g = new Graph(2,0.900000,true, 9242, 7314);
+        Graph g = new Graph(20,0.900000,true, 9242, 7314);
         // System.out.println(g.adjacency);
         // for (int i = 0; i < g.length; i++) {
         //     for (int j = 0; j < g.length; j++) {
@@ -52,7 +52,7 @@ public class Main {
         s.execute();
         s.process_output("dijkstra");
         System.out.println("Finished Dijkstra's algorithm");
-        SimpleMatrix dijkstra_dist = s.get_shared_memory().get("output_dist");
+        // SimpleMatrix dijkstra_dist = s.get_shared_memory().get("output_dist");
 
         // System.out.println("Starting Cannon's algorithm...");
         // s = new Simulator(p, g, new CannonsMCU(), new Memory());
@@ -66,34 +66,34 @@ public class Main {
         // System.out.println("Finished Fox-Otto's algorithm");
         
 
-        Memory sm = s.get_shared_memory();
-        int from = 0;
-        int to = 1;
-        sm.set("from_node", from);
-        sm.set("to_node", to);
-        // sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from,to)}}));
-        sm.set("new_weight", new SimpleMatrix(new double[][]{{1.565552}}));
-        sm.set("undirected", 1);
-        // g.update_edge(from, to,Double.POSITIVE_INFINITY, false);
-        System.out.println("Starting Dynamic algorithm...");
-        s = new Simulator(p, g, new DynamicMCU(), sm);
-        s.execute();
+        // Memory sm = s.get_shared_memory();
+        // int from = 0;
+        // int to = 1;
+        // sm.set("from_node", from);
+        // sm.set("to_node", to);
+        // // sm.set("old_weight", new SimpleMatrix(new double[][]{{g.adjacency.get(from,to)}}));
+        // sm.set("new_weight", new SimpleMatrix(new double[][]{{1.565552}}));
+        // sm.set("undirected", 1);
+        // // g.update_edge(from, to,Double.POSITIVE_INFINITY, false);
+        // System.out.println("Starting Dynamic algorithm...");
+        // s = new Simulator(p, g, new DynamicMCU(), sm);
+        // s.execute();
         // sm.set("to_node", new SimpleMatrix(new double[][]{{from}}));
         // sm.set("from_node", new SimpleMatrix(new double[][]{{to}}));
         // g.update_edge(to, from, Double.POSITIVE_INFINITY, false);
         // System.out.println("Starting Dynamic algorithm...");
         // s = new Simulator(p, g, new DynamicMCU(), sm);
         // s.execute();
-        s.process_output("dynamic");
-        System.out.println("Finished Dynamic algorithm");
-        SimpleMatrix dynamic_dist = sm.get("output_dist");
-        SimpleMatrix dynamic_pred = sm.get("output_pred");
+        // s.process_output("dynamic");
+        // System.out.println("Finished Dynamic algorithm");
+        // SimpleMatrix dynamic_dist = sm.get("output_dist");
+        // SimpleMatrix dynamic_pred = sm.get("output_pred");
 
-        System.out.println("Starting Dijkstra's algorithm...");
-        s = new Simulator(p, g, new DijkstraMCU(), new Memory());
-        s.execute();
-        s.process_output("dijkstra");
-        System.out.println("Finished Dijkstra's algorithm");
+        // System.out.println("Starting Dijkstra's algorithm...");
+        // s = new Simulator(p, g, new DijkstraMCU(), new Memory());
+        // s.execute();
+        // s.process_output("dijkstra");
+        // System.out.println("Finished Dijkstra's algorithm");
 
         // SimpleMatrix dijkstra_dist = sm.get("output_dist");
         // SimpleMatrix dijkstra_pred = s.get_shared_memory().get("output_pred");

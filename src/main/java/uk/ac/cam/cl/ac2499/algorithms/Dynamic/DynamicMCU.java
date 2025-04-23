@@ -4,11 +4,10 @@ import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
 import uk.ac.cam.cl.ac2499.algorithms.Shutdown;
-import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class DynamicMCU extends CodeBlock {
-    public void update_edge(Timer timer, Timer communication_timer, int graph_length, int batch_size, SimpleMatrix dist, SimpleMatrix pred, int from_node, int to_node, double weight_change, double new_weight) {
-        timer.pause();
+    public void update_edge(int graph_length, int batch_size, SimpleMatrix dist, SimpleMatrix pred, int from_node, int to_node, double weight_change, double new_weight) {
+        // timer.pause();
         int source = 0;
         while (source < graph_length) {
             int dispatch = 1;
@@ -37,26 +36,26 @@ public class DynamicMCU extends CodeBlock {
                 dispatch++;
                 source++;
             }
-            long max_batch_time = -1;
+            // long max_batch_time = -1;
             for (int p = 1; p < dispatch; p++) {
                 pm.add_metrics(7, 1);
-                communication_timer.resume();
+                // communication_timer.resume();
                 this.communications.receive_data(p,0);
                 this.communications.receive_data(p,0);
-                communication_timer.pause();
-                long pe_time = mm.get_long(String.format("%d", p));
-                if (pe_time > max_batch_time)
-                    max_batch_time = pe_time;
+                // communication_timer.pause();
+                // long pe_time = mm.get_long(String.format("%d", p));
+                // if (pe_time > max_batch_time)
+                //     max_batch_time = pe_time;
             }
-            timer.add_time(max_batch_time);
+            // timer.add_time(max_batch_time);
         }
-        timer.resume();
+        // timer.resume();
     }
 
     public void run() {
-        Timer timer = new Timer();
-        Timer communication_timer = new Timer();
-        timer.resume();
+        // Timer timer = new Timer();
+        // Timer communication_timer = new Timer();
+        // timer.resume();
         SimpleMatrix graph = sm.get("graph");
         int graph_length = graph.getNumCols();
         int batch_size = peGridSize * peGridSize;
@@ -73,7 +72,7 @@ public class DynamicMCU extends CodeBlock {
 
         pm.add_metrics(0, 1);
 
-        update_edge(timer, communication_timer, graph_length, batch_size, dist, pred, node_A, node_B, new_weight - old_weight, new_weight);
+        update_edge(graph_length, batch_size, dist, pred, node_A, node_B, new_weight - old_weight, new_weight);
 
         pm.set("path_dists", new SimpleMatrix(graph_length, graph_length));
         pm.set("path_preds", new SimpleMatrix(graph_length, graph_length));
@@ -95,7 +94,7 @@ public class DynamicMCU extends CodeBlock {
             sm.set("from_node", node_B);
             sm.set("to_node", node_A);
 
-            update_edge(timer, communication_timer, graph_length, batch_size, dist, pred, node_B, node_A, new_weight - old_weight, new_weight);
+            update_edge(graph_length, batch_size, dist, pred, node_B, node_A, new_weight - old_weight, new_weight);
 
             pm.add_metrics(0, 1);
             for (int source = 0; source < graph_length; source++) {
@@ -115,9 +114,9 @@ public class DynamicMCU extends CodeBlock {
 
         sm.set("output_dist", pm.get("path_dists"));
         sm.set("output_pred", pm.get("path_preds"));
-        timer.pause();
-        mm.set("runtime", timer.get_time());
-        mm.set("commtime", communication_timer.get_time());
+        // timer.pause();
+        // mm.set("runtime", timer.get_time());
+        // mm.set("commtime", communication_timer.get_time());
         System.out.printf("MA: [%s]%n","#".repeat(80));
         communications.send_instruction(0,new Shutdown());
 

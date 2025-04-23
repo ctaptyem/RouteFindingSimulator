@@ -68,7 +68,7 @@ def plot_all(measurement_file_name: str):
     dfs = []
     for file in Path.iterdir(Path.cwd() / Path("measurements") / measurement_file_name):
         file_df = pd.read_csv(file)
-        file_df['edge_update_type'] = file.name[:-4]
+        file_df['edge_update_type'] = file.name[:-4] # change this to something else for static?
         dfs.append(file_df)
     df = pd.concat(dfs)
     df = df[df['pe_grid_size'] == 4]
@@ -101,6 +101,6 @@ def explore_dataset():
     print(np.mean(df['length']))
 
 if __name__ == "__main__":
-    measurement_file_name = "first_dynamic"
+    measurement_file_name = "metric_test"
     plot_all(measurement_file_name)
     # explore_dataset()

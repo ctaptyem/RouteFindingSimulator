@@ -27,7 +27,6 @@ public class DijkstraMCU extends CodeBlock {
                 CodeBlock PE_algo = new DijkstraPE();
                 this.communications.send_instruction(j+1,PE_algo);
                 this.communications.send_data(0, j+1, String.format("%d", i+j));
-                this.communications.send_data(0,j+1,"graph");
             }
             // long max_batch_time = -1;
             for (int j = 0; j < batch_size && i+j < graph_length; j++) {

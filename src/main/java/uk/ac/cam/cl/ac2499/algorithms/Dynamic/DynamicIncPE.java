@@ -10,7 +10,8 @@ public class DynamicIncPE extends CodeBlock{
         // Timer timer = new Timer();
         // timer.resume();
         int source = Integer.parseInt(communications.receive_data(0, id));
-        pm.set("graph", sm.get(communications.receive_data(0,id)));
+        if (!pm.contains("graph"))
+            pm.set("graph", sm.get("graph"));
         int graph_length = pm.get("graph").getNumCols();
         int from_node = (int) sm.get_long(communications.receive_data(0, id));
         int to_node = (int) sm.get_long(communications.receive_data(0, id));

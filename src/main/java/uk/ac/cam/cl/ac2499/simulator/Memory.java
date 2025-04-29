@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.ejml.simple.SimpleMatrix;
 
-import uk.ac.cam.cl.ac2499.Graph;
+import uk.ac.cam.cl.ac2499.graph.Graph;
 
 public class Memory {
     ConcurrentHashMap<String, SimpleMatrix> matrix_store;
@@ -60,5 +60,4 @@ public class Memory {
         total_read+=read;
         total_write+=write;
     }
-
 }

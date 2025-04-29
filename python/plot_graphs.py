@@ -82,14 +82,14 @@ def plot_all(measurement_file_name: str):
     Path.mkdir(output_dir, parents=True, exist_ok=True)
 
 
-    # make_figure(output_dir, df, 'node_count', 'runtime', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
-    # make_figure(output_dir, df, 'node_count', 'total_time', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
-    # make_figure(output_dir, df, 'edge_percentage', 'runtime', False, False, "Proportion of Edges", "Execution Time (ms)", ylim=0.0)
-    # make_figure(output_dir, df, 'proc_count', 'runtime', True, False, "Processor Count", "Execution Time (ms)", ylim=0.0)
+    make_figure(output_dir, df, 'node_count', 'runtime', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
+    make_figure(output_dir, df, 'node_count', 'total_time', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
+    make_figure(output_dir, df, 'edge_percentage', 'runtime', False, False, "Proportion of Edges", "Execution Time (ms)", ylim=0.0)
+    make_figure(output_dir, df, 'proc_count', 'runtime', True, False, "Processor Count", "Execution Time (ms)", ylim=0.0)
     make_figure(output_dir, df, 'node_count', 'comm_estimate', True, True, "Node Count", "Communication Time (ms)", ylim=0.0)
     make_figure(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
-    # make_figure(output_dir, df, 'proc_count', 'commtime_percent', False, False, "Processor Count", "Percent of time spent communicating (%)", ylim=0.0)
-    # make_figure(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
+    make_figure(output_dir, df, 'proc_count', 'commtime_percent', False, False, "Processor Count", "Percent of time spent communicating (%)", ylim=0.0)
+    make_figure(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
 
 def explore_dataset():
     df = pd.read_csv('/home/andrei/Dev/RouteFindingSimulator/testing/input/OL.cedge', delimiter=' ')
@@ -101,6 +101,6 @@ def explore_dataset():
     print(np.mean(df['length']))
 
 if __name__ == "__main__":
-    measurement_file_name = "metric_test"
+    measurement_file_name = "low_density"
     plot_all(measurement_file_name)
     # explore_dataset()

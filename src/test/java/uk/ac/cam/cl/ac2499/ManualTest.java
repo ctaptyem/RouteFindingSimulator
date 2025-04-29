@@ -11,6 +11,7 @@ import org.ejml.simple.SimpleMatrix;
 import uk.ac.cam.cl.ac2499.algorithms.Cannons.CannonsMCU;
 import uk.ac.cam.cl.ac2499.algorithms.Dijkstra.DijkstraMCU;
 import uk.ac.cam.cl.ac2499.algorithms.FoxOtto.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.graph.Graph;
 import uk.ac.cam.cl.ac2499.simulator.Memory;
 import uk.ac.cam.cl.ac2499.simulator.Simulator;
 

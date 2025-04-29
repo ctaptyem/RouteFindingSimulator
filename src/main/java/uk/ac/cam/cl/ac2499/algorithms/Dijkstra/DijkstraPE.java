@@ -12,7 +12,8 @@ public class DijkstraPE extends CodeBlock {
         // timer.resume();
         pm.add_metrics(9,3);
         int source = Integer.parseInt(communications.receive_data(0, id));
-        pm.set("graph", sm.get(communications.receive_data(0,id)));
+        if (!pm.contains("graph"))
+            pm.set("graph", sm.get("graph"));
         int graph_length = pm.get("graph").getNumCols();
         pm.set("dist", SimpleMatrix.filled(1, graph_length, Double.POSITIVE_INFINITY));
         pm.set("pred", SimpleMatrix.filled(1, graph_length, -1));

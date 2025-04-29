@@ -65,7 +65,7 @@ def get_command_to_run(output_file: Path, pe_grid_size: int, algorithm: str, edg
 def run_static_experiments(output_path: Path, graph_configs: dict[str, Iterable[int|float]], simulator_configs: dict[str, Iterable[int|str]]):
     output_file = output_path / "data.csv"
     with open(output_file, 'w') as outfile:
-        outfile.write("algorithm,pe_grid_size,node_count,edge_percentage,undirected,edge_seed,weight_seed,runtime,commtime,commcount,commvolume,total_read,total_write\n")
+        outfile.write("algorithm,pe_grid_size,node_count,edge_percentage,undirected,edge_seed,weight_seed,runtime,commcount,commvolume,runtime2,total_read,total_write\n")
     progress = 0
     total = math.prod([len(v) for v in graph_configs.values()]) * math.prod([len(v) for v in simulator_configs.values()])
     print("Starting...")
@@ -133,11 +133,11 @@ def run_all_dynamic_experiments(output_path: Path, output_name:str, graph_config
 
 
 def main():
-    output_name = "metric_test"
+    output_name = "low_density"
 
     graph_configs = {
-        "node_counts": np.round(10 * (2 ** np.linspace(0, 4, 8))).astype(int), #np.round(10 * (2 ** np.linspace(0, 5, 14))).astype(int),
-        "edge_props": np.round(np.linspace(0.05,0.95,5),5), # [0.1, 0.3, 0.5, 0.7, 0.9]
+        "node_counts": [100], #np.round(10 * (2 ** np.linspace(0, 4, 8))).astype(int), #np.round(10 * (2 ** np.linspace(0, 5, 14))).astype(int),
+        "edge_props": np.round(np.linspace(0.0005,0.0095,5),5), # [0.1, 0.3, 0.5, 0.7, 0.9]
         "random_seeds": [[73, 6135], [8804, 1854], [8224, 2195], ]#[480, 5607], [5764, 4112], [722, 2905], [4776, 3417], [6117, 6371], [9242, 7314], [4399, 4691]],
     }
     simulator_configs = {

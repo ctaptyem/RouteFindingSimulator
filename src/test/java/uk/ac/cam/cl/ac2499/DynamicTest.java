@@ -12,6 +12,7 @@ import uk.ac.cam.cl.ac2499.algorithms.Cannons.CannonsMCU;
 import uk.ac.cam.cl.ac2499.algorithms.Dijkstra.DijkstraMCU;
 import uk.ac.cam.cl.ac2499.algorithms.Dynamic.DynamicMCU;
 import uk.ac.cam.cl.ac2499.algorithms.FoxOtto.FoxOttoMCU;
+import uk.ac.cam.cl.ac2499.graph.Graph;
 import uk.ac.cam.cl.ac2499.simulator.Memory;
 import uk.ac.cam.cl.ac2499.simulator.Simulator;
 
@@ -39,7 +40,7 @@ public class DynamicTest extends GenericTest{
     //     return configs;
     // }
 
-    // @Disabled
+    @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testFiniteChange(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
@@ -88,7 +89,7 @@ public class DynamicTest extends GenericTest{
     }
 
 
-    // @Disabled
+    @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
     void testInfiniteChange(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {

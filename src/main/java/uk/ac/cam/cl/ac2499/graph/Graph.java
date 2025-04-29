@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.ac2499;
+package uk.ac.cam.cl.ac2499.graph;
 
 
 import org.ejml.simple.SimpleMatrix;
@@ -25,6 +25,7 @@ public class Graph {
     public int length;
     public boolean undirected;
     public String descriptor_string;
+    public boolean is_compressed;
     
     public Graph(String filepath, boolean undirected) throws IOException {
         this.undirected = undirected;
@@ -64,10 +65,10 @@ public class Graph {
                     if (line != null) tokens = line.split(" ");
                 }
 
-                this.length = max_node_id;
+                this.length = max_node_id+1;
                 int edge_count = undirected ? 2 * data.size() : data.size();
                 this.descriptor_string = String.format("%d,%f,%b,null,null,null,null", length, (float)edge_count/(length * length - length), undirected);
-                adjacency = SimpleMatrix.filled(max_node_id+1, max_node_id+1, Double.POSITIVE_INFINITY);
+                adjacency = SimpleMatrix.filled(length, length, Double.POSITIVE_INFINITY);
                 for (int i = 0; i <= max_node_id; i++) adjacency.set(i,i,0.0);
                 for (Edge e : data) {
                     adjacency.set(e.startNodeId, e.endNodeId, e.length);
@@ -138,8 +139,13 @@ public class Graph {
                 anti_edges--;
             }
         }
+    }
 
-
+    public Graph(SimpleMatrix adjacency, int length, boolean undirected, String descriptor_string) {
+        this.adjacency = adjacency;
+        this.length = length;
+        this.undirected = undirected;
+        this.descriptor_string = descriptor_string;
     }
 
     public void update_edge(int node_A, int node_B, double new_weight) {

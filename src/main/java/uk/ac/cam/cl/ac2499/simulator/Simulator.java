@@ -8,8 +8,8 @@ import java.util.concurrent.*;
 
 import org.ejml.simple.SimpleMatrix;
 
-import uk.ac.cam.cl.ac2499.Graph;
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+import uk.ac.cam.cl.ac2499.graph.Graph;
 
 public class Simulator {
     Graph graph;
@@ -66,7 +66,14 @@ public class Simulator {
         long comm_count = MetricTracker.get_log_sum(MCU.metric_tracker.comm_count_log);
         long comm_volume = MetricTracker.get_log_sum(MCU.metric_tracker.comm_volume_log);
         long[] PE_metrics = MetricTracker.process_metrics(processors);
-        return new long[]{PE_metrics[0]+runtime, PE_metrics[1]+comm_count, PE_metrics[2]+comm_volume};
+        long max_time = 0;
+        for (int i = 0; i < processors.length; i++) {
+            for (int j = 0; j < processors.length; j++) {
+                if (max_time < processors[i][j].time)
+                    max_time = processors[i][j].time;
+            }
+        }
+        return new long[]{PE_metrics[0]+runtime, PE_metrics[1]+comm_count, PE_metrics[2]+comm_volume, max_time+MCU.time};
     }
 
     public void process_output(String outputName) throws FileNotFoundException {
@@ -114,14 +121,16 @@ public class Simulator {
         FileWriter fw = new FileWriter(outputName, true);
         long[] metrics = extract_metrics();
         // algorithm, peGridSize, node_count, edge_percent, undirected, edge_seed, weight_seed, runtime, commtime, commcount, commvolume, total_read, total_write
-        fw.write(String.format("%s,%d,%s,%d,%d,%d,%d,%d%n", 
+        fw.write(String.format("%s,%d,%s,%b,%d,%d,%d,%d,%d,%d%n", 
             algorithm.getClass().getSimpleName(), 
             peGridSize, 
             graph.get_descriptor(), 
+            graph.is_compressed,
             metrics[0], 
             // metricMemory.get_long("commtime"), 
             metrics[1], 
             metrics[2], 
+            metrics[3],
             sharedMemory.total_read, 
             sharedMemory.total_write)
         );

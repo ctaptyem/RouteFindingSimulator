@@ -25,7 +25,6 @@ public class DynamicMCU extends CodeBlock {
                 }
                 communications.send_instruction(dispatch,PE_algo);
                 communications.send_data(0, dispatch, String.format("%d", source));
-                communications.send_data(0,dispatch,"graph");
                 communications.send_data(0, dispatch, "from_node");
                 communications.send_data(0, dispatch, "to_node");
                 communications.send_data(0, dispatch, "old_weight");

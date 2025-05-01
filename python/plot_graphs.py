@@ -71,28 +71,33 @@ def plot_all(measurement_file_name: str):
         file_df['edge_update_type'] = file.name[:-4] # change this to something else for static?
         dfs.append(file_df)
     df = pd.concat(dfs)
-    df = df[df['pe_grid_size'] == 4]
+    # df = df[df['pe_grid_size'] == 4]
     df['proc_count'] = np.square(df['pe_grid_size'])+1
     df['comm_estimate'] = (df['commcount']*100 + df['commvolume']*10)/1e9
     df['runtime'] = df['runtime']/1000
     df['total_time'] = df['runtime']+df['comm_estimate']
     df['commtime_percent'] = (df['comm_estimate']) / (df['total_time'])
+    baseline_times = df[df['proc_count'] == 2].groupby('algorithm')['total_time'].mean().to_dict()
+    df['speedup'] = df.apply(lambda row: (baseline_times[row['algorithm']]/row['total_time']), axis=1)
+    df['efficiency'] = df['speedup']/(df['proc_count'] - 1)
 
     output_dir = Path.cwd() / Path("plots") / measurement_file_name
     Path.mkdir(output_dir, parents=True, exist_ok=True)
+    
 
-
-    make_figure(output_dir, df, 'node_count', 'runtime', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
+    # make_figure(output_dir, df, 'node_count', 'runtime', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
     make_figure(output_dir, df, 'node_count', 'total_time', True, True, "Node Count", "Execution Time (ms)", ylim=0.0)
-    make_figure(output_dir, df, 'edge_percentage', 'runtime', False, False, "Proportion of Edges", "Execution Time (ms)", ylim=0.0)
-    make_figure(output_dir, df, 'proc_count', 'runtime', True, False, "Processor Count", "Execution Time (ms)", ylim=0.0)
+    # make_figure(output_dir, df, 'edge_percentage', 'runtime', False, False, "Proportion of Edges", "Execution Time (ms)", ylim=0.0)
+    make_figure(output_dir, df, 'proc_count', 'total_time', True, False, "Processor Count", "Execution Time (ms)", ylim=0.0)
     make_figure(output_dir, df, 'node_count', 'comm_estimate', True, True, "Node Count", "Communication Time (ms)", ylim=0.0)
     make_figure(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
     make_figure(output_dir, df, 'proc_count', 'commtime_percent', False, False, "Processor Count", "Percent of time spent communicating (%)", ylim=0.0)
     make_figure(output_dir, df, 'node_count', 'commtime_percent', False, False, "Node Count", "Percent of time spent communicating (%)", ylim=0.0)
+    make_figure(output_dir, df, 'proc_count', 'speedup', False, False, "Processor Count", "Percent speedup (%)")
+    make_figure(output_dir, df, 'proc_count', 'efficiency', False, False, "Processor Count", "Efficiency")
 
 def explore_dataset():
-    df = pd.read_csv('/home/andrei/Dev/RouteFindingSimulator/testing/input/OL.cedge', delimiter=' ')
+    df = pd.read_csv('/home/andrei/Dev/RouteFindingSimulator/input_graphs/OL.cedge', delimiter=' ')
     df.columns = ['edge_id,', 'node_A', 'node_B', 'length']
     plt.hist(df['length'])
     plt.yscale('log')

@@ -45,7 +45,7 @@ public class CompressionTest extends GenericTest {
     // @Disabled
     @Test
     void testCompressionMatches() throws InterruptedException, ExecutionException, IOException {
-        Graph g = new Graph("testing/input/OL.cedge", false);
+        Graph g = new Graph("input_graphs/OL.cedge", false);
         int p = 4;
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());

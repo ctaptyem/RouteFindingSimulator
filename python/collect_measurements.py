@@ -54,7 +54,7 @@ def get_command_to_run(output_file: Path, pe_grid_size: int, algorithm: str, edg
                     "-a", f"{algorithm}",
                     "-u", "true",
                     # "-g", f"{int(node_count)},{float(edge_percent)},{int(seeds[0])},{int(seeds[1])}"
-                    "-i", "/home/andrei/Dev/RouteFindingSimulator/testing/input/random_graph.txt",
+                    "-i", "/home/andrei/Dev/RouteFindingSimulator/input_graphs/random_graph.txt",
                 ]
     if len(edge_update) > 0:
         command.append("-e")
@@ -71,7 +71,7 @@ def run_static_experiments(output_path: Path, graph_configs: dict[str, Iterable[
     print("Starting...")
     subprocess.run(["mvn", "clean", "compile", "assembly:single"], capture_output=True)
     for node_count, edge_prop, seeds in [graph_config for graph_config in product(*[v for v in graph_configs.values()])]:
-        generate_graph(Path("/home/andrei/Dev/RouteFindingSimulator/testing/input/random_graph.txt"), node_count, edge_prop, True, seeds[0], seeds[1])
+        generate_graph(Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/random_graph.txt"), node_count, edge_prop, True, seeds[0], seeds[1])
         for pe_grid_size, algorithm in [simulator_config for simulator_config in product(*[v for v in simulator_configs.values()])]:
             result = subprocess.run(get_command_to_run(output_file, pe_grid_size,algorithm), capture_output=True)
             progress+=1
@@ -86,7 +86,7 @@ def run_dynamic_experiments(output_file: Path, graph_configs: dict[str, Iterable
     print("Starting...")
     subprocess.run(["mvn", "clean", "compile", "assembly:single"], capture_output=True)
     for node_count, edge_prop, seeds in [graph_config for graph_config in product(*[v for v in graph_configs.values()])]:
-        graph = generate_graph(Path("/home/andrei/Dev/RouteFindingSimulator/testing/input/random_graph.txt"), node_count, edge_prop, True, seeds[0], seeds[1])
+        graph = generate_graph(Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/random_graph.txt"), node_count, edge_prop, True, seeds[0], seeds[1])
         edge_update_str = edge_update(seeds[0]+seeds[1], graph)
         for pe_grid_size, algorithm in [simulator_config for simulator_config in product(*[v for v in simulator_configs.values()])]:
             command = get_command_to_run(output_file, pe_grid_size, algorithm, edge_update_str)
@@ -136,7 +136,7 @@ def main():
     output_name = "low_density"
 
     graph_configs = {
-        "node_counts": [100], #np.round(10 * (2 ** np.linspace(0, 4, 8))).astype(int), #np.round(10 * (2 ** np.linspace(0, 5, 14))).astype(int),
+        "node_counts": np.round(10 * (2 ** np.linspace(0, 4, 12))).astype(int), #np.round(10 * (2 ** np.linspace(0, 5, 14))).astype(int),
         "edge_props": np.round(np.linspace(0.0005,0.0095,5),5), # [0.1, 0.3, 0.5, 0.7, 0.9]
         "random_seeds": [[73, 6135], [8804, 1854], [8224, 2195], ]#[480, 5607], [5764, 4112], [722, 2905], [4776, 3417], [6117, 6371], [9242, 7314], [4399, 4691]],
     }

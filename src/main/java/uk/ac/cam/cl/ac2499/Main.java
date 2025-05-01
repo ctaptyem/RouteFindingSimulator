@@ -28,7 +28,7 @@ import uk.ac.cam.cl.ac2499.simulator.Simulator;
 public class Main {
 
     public static void run_simulator() throws IOException, ExecutionException, InterruptedException {
-        Graph g = new Graph("testing/input/OL.cedge", false);
+        Graph g = new Graph("input_graphs/OL.cedge", false);
         int p = 4;
         Simulator s;
         // s = new Simulator(p, g, new DijkstraMCU(), new Memory());
@@ -49,7 +49,7 @@ public class Main {
         // }
 
 
-        // // Graph g = new Graph("testing/input/zerod_example_2.txt", true); //new Graph("testing/input/OL.cedge");
+        // // Graph g = new Graph("input_graphs/zerod_example_2.txt", true); //new Graph("input_graphs/OL.cedge");
         // // Graph g = new Graph(200,0.75,true,50.0,20.0,9063,3609);
         // Graph g = new Graph(20,0.900000,true, 9242, 7314);
         // // System.out.println(g.adjacency);
@@ -222,7 +222,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
-        // String[] my_args = {"/home/andrei/Dev/RouteFindingSimulator/target/RouteFindingSimulator-1.0-SNAPSHOT-jar-with-dependencies.jar", "-i", "/home/andrei/Dev/RouteFindingSimulator/testing/input/random_graph.txt", "-u", "true", "-e", "6,9,Infinity", "-p", "1", "-a", "dynamic", "-o", "/home/andrei/Dev/RouteFindingSimulator/measurements/first_dynamic/first_dynamic_increase_edge.csv"};
+        // String[] my_args = {"/home/andrei/Dev/RouteFindingSimulator/target/RouteFindingSimulator-1.0-SNAPSHOT-jar-with-dependencies.jar", "-i", "/home/andrei/Dev/RouteFindingSimulator/input_graphs/random_graph.txt", "-u", "true", "-e", "6,9,Infinity", "-p", "1", "-a", "dynamic", "-o", "/home/andrei/Dev/RouteFindingSimulator/measurements/first_dynamic/first_dynamic_increase_edge.csv"};
         execute_with_arguments(args);
         // run_simulator();
     }

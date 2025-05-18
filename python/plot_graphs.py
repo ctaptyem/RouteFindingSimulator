@@ -137,7 +137,7 @@ def explore_dataset():
     import networkx as nx
     import json
     # import nx_cugraph as cg
-    df = pd.read_csv('/home/andrei/Dev/RouteFindingSimulator/input_graphs/cal.cedge', delimiter=' ')
+    df = pd.read_csv('input_graphs/cal.cedge', delimiter=' ')
     df.columns = ['edge_id,', 'node_A', 'node_B', 'length']
     G = nx.Graph()
     for idx, row in df.iterrows():

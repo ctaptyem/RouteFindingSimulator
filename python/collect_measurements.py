@@ -91,7 +91,7 @@ def remove_best_edge(seed: int, graph: np.ndarray) -> str:
     return f'{int(node_A)},{int(node_B)},Infinity'
 
 def get_command_to_run(output_file: Path, graph_path: Path, pe_grid_size: int, algorithm: str, edge_update: str = "", compress: bool = False) -> list[str]:
-    command = ["java", "-jar", "/home/andrei/Dev/RouteFindingSimulator/target/RouteFindingSimulator-1.0-SNAPSHOT-jar-with-dependencies.jar", 
+    command = ["java", "-jar", "target/RouteFindingSimulator-1.0-SNAPSHOT-jar-with-dependencies.jar", 
                     "-o", f"{output_file}",
                     "-p", f"{int(pe_grid_size)}",
                     "-a", f"{algorithm}",
@@ -137,7 +137,7 @@ def run_experiments(output_path: Path, graph_configs: dict[str, Iterable[int|flo
             print()
         else:
             for node_count, avg_degree, seeds in [graph_config for graph_config in product(*[v for v in graph_configs.values()])]:
-                graph = generate_graph(Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/random_graph.txt"), node_count, avg_degree, True, seeds[0], seeds[1])
+                graph = generate_graph(Path("input_graphs/random_graph.txt"), node_count, avg_degree, True, seeds[0], seeds[1])
                 edge_update_str = edge_update_func(seeds[0]+seeds[1], graph)
                 for pe_grid_size, algorithm in [simulator_config for simulator_config in product(*[v for v in simulator_configs.values()])]:
                     progress+=1
@@ -153,7 +153,7 @@ def main():
         "avg_degrees": [2.5],#[2, 2.25, 2.5, 3.0, 3.5],#np.round(np.linspace(2,4,5),5),#np.round(np.linspace(0.0005,0.0095,5),5), # [0.1, 0.3, 0.5, 0.7, 0.9]
         "random_seeds": [[722, 2905], [4776, 3417], [6117, 6371]],#[73, 6135], [8804, 1854], [8224, 2195],[480, 5607], [5764, 4112]],# [722, 2905], [4776, 3417], [6117, 6371], [9242, 7314], [4399, 4691]],
         "edge_updates": [decrease_edge, increase_edge, add_edge, remove_edge]
-        # "graph_paths": [Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/cal.cedge"),Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/cal.cedge"),Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/cal.cedge"),Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/cal.cedge"),Path("/home/andrei/Dev/RouteFindingSimulator/input_graphs/cal.cedge")]
+        # "graph_paths": [Path("input_graphs/cal.cedge")]
     }
     simulator_configs = {
         "pe_grid_sizes": [8,10],#[1,2,3,4,5,6],#[4,7,10,13,16], #[4,7,10,13,16],#2 ** np.linspace(0,4,5, dtype=int), #[1,2,4,8,16]

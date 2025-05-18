@@ -3,79 +3,77 @@ package uk.ac.cam.cl.ac2499.algorithms.FoxOtto;
 import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+import uk.ac.cam.cl.ac2499.algorithms.utils.SubMatrix;
 
 public class FoxOttoPE extends CodeBlock{
     
     public void run() {
-        // Timer timer = new Timer();
-        // Timer communication_timer = new Timer();
-        pm.add_metrics(5,1);
-        SimpleMatrix B = sm.get(communications.receive_data(0,id));
-        communications.send_data(id,0,"need new A");
-        SimpleMatrix A = sm.get(communications.receive_data(0,id));
-        // timer.resume();
-        int dim = A.getNumRows();
-        SimpleMatrix C = new SimpleMatrix(dim, dim);
+        SubMatrix B = sm.get_submatrix(communications.receive_data(0,id));
+        SimpleMatrix P = sm.get(communications.receive_data(0,id));
 
-        pm.add_metrics(0, 1);
+        communications.send_data(id,0,"need new A");
+        SubMatrix A = sm.get_submatrix(communications.receive_data(0,id));
+
+        int dim = A.matrix.getNumRows();
+        SimpleMatrix C = SimpleMatrix.filled(dim, dim, Double.POSITIVE_INFINITY);
+
         for (int i = 0; i < dim; i++) {
-            pm.add_metrics(3, 2);
-            SimpleMatrix A_row = A.getRow(i);
+            SimpleMatrix A_row = A.matrix.getRow(i);
             if (A_row.elementMin() < Double.POSITIVE_INFINITY) {
                 for (int j = 0; j < dim; j++) {
-                    pm.add_metrics(7, 1);
-                    double best_value = A_row.plus(B.getRow(j)).elementMin();
+                    SimpleMatrix B_col = B.matrix.getColumn(j);
+                    double best_value = C.get(i,j);
+                    double best_pred = P.get(i,j);
+                    for (int k = 0; k < dim; k++) {
+                        if (A_row.get(k) + B_col.get(k) < best_value) {
+                            best_value = A_row.get(k) + B_col.get(k);
+                            best_pred = A.col+k;
+                        }
+                    }
                     C.set(i, j, best_value);
+                    P.set(i,j,best_pred);
                 }
             }
         }
 
-        pm.add_metrics(8, 3);
-        int B_next_id = Math.floorMod(id-1-peGridSize, peGridSize*peGridSize)+1;
+
+        int B_next_id = Math.floorMod(id-1-pe_grid_size, pe_grid_size*pe_grid_size)+1;
         // int A_next_id = Math.floorMod(id, peGridSize)+(id-((id-1)%peGridSize));
-        int B_prev_id = Math.floorMod(id-1+peGridSize, peGridSize*peGridSize)+1;
+        int B_prev_id = Math.floorMod(id-1+pe_grid_size, pe_grid_size*pe_grid_size)+1;
         // int A_prev_id = Math.floorMod(id-2, peGridSize)+(id-((id-1)%peGridSize));
 
-        for (int num_iterations = 1; num_iterations < peGridSize; num_iterations++) {
-            pm.add_metrics(9,2);
-            // sm.set(String.format("%d_B_%d", B_next_id, num_iterations), B);
+        for (int num_iterations = 1; num_iterations < pe_grid_size; num_iterations++) {
             // Send B submatrix to neighbor
-            communications.send_matrix(id, B_next_id, String.format("%d_B_%d", B_next_id, num_iterations), B, sm);
-            // print("Sent B to neighbor");
+            communications.send_submatrix(id, B_next_id, String.format("%d_B_%d", B_next_id, num_iterations), B, sm);
 
             // Receive new B submatrix from neighbor
-            // timer.pause();  
-            // communication_timer.resume();
-            B =  sm.get(communications.receive_data(B_prev_id, id));
-            // print("Received new B");
+            B =  sm.get_submatrix(communications.receive_data(B_prev_id, id));
 
             communications.send_data(id,0,"need new A");
-            A = sm.get(communications.receive_data(0, id));
-            // print("Received new A");
-            // communication_timer.pause();
-            // timer.resume();
+            A = sm.get_submatrix(communications.receive_data(0, id));
 
             for (int i = 0; i < dim; i++) {
-                pm.add_metrics(3, 2);
-                SimpleMatrix A_row = A.getRow(i);
+                SimpleMatrix A_row = A.matrix.getRow(i);
                 if (A_row.elementMin() < Double.POSITIVE_INFINITY) {
                     for (int j = 0; j < dim; j++) {
-                        pm.add_metrics(7, 1);
-                        double best_value = Math.min(C.get(i,j), A_row.plus(B.getRow(j)).elementMin());
+                        SimpleMatrix B_col = B.matrix.getColumn(j);
+                        double best_value = C.get(i,j);
+                        double best_pred = P.get(i,j);
+                        for (int k = 0; k < dim; k++) {
+                            if (A_row.get(k) + B_col.get(k) < best_value) {
+                                best_value = A_row.get(k) + B_col.get(k);
+                                best_pred = A.col+k;
+                            }
+                        }
                         C.set(i, j, best_value);
+                        P.set(i,j,best_pred);
                     }
                 }
             }
-            
-            // print("Set new C;
         }        
         
-        pm.add_metrics(3, 0);
-        // sm.set(String.format("%d_C",id), C);
-        // timer.pause();
-        // mm.set(String.format("%d_runtime", id), timer.get_time());
-        // mm.set(String.format("%d_commtime", id), communication_timer.get_time());
         communications.send_matrix(id, 0, String.format("%d_C",id), C, sm);
-        // print("Sent final C");
+        communications.send_matrix(id, 0, String.format("%d_P",id), P, sm);
+
     }
 }

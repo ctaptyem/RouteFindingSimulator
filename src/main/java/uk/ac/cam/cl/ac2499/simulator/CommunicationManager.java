@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+import uk.ac.cam.cl.ac2499.algorithms.utils.SubMatrix;
 
 public class CommunicationManager implements CommunicationInterface{
     LinkedBlockingQueue<String>[][] data_link;
@@ -33,6 +34,11 @@ public class CommunicationManager implements CommunicationInterface{
     // }
 
     public void send_matrix(int source, int destination, String data, SimpleMatrix matrix, Memory sm) {
+        sm.set(data, matrix);
+        this.data_link[source][destination].offer(data);
+    }
+
+    public void send_submatrix(int source, int destination, String data, SubMatrix matrix, Memory sm) {
         sm.set(data, matrix);
         this.data_link[source][destination].offer(data);
     }

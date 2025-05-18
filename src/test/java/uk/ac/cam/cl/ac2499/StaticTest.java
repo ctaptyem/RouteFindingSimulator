@@ -23,8 +23,9 @@ public class StaticTest extends GenericTest{
     @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
-    void testInfiniteMatches(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
-        Graph g = new Graph(config[0],config[1]/10000.0,true,config[2],config[3]);
+    void testInfiniteDistanceMatches(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
+        System.out.println(print_config(config));
+        Graph g = new Graph(config[0],config[1],true,config[2],config[3]);
         int p = config[4];
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());
@@ -62,22 +63,29 @@ public class StaticTest extends GenericTest{
     @Disabled
     @ParameterizedTest
     @MethodSource(value = "configs")
-    void testAllMatch(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
-        Graph g = new Graph(config[0],config[1]/10000.0,true,config[2],config[3]);
+    void testAllDistancesMatch(int[] config) throws InterruptedException, ExecutionException, FileNotFoundException {
+        System.out.println(print_config(config));
+        Graph g = new Graph(config[0],config[1],true,config[2],config[3]);
         int p = config[4];
         Simulator s;
         s = new Simulator(p, g, new DijkstraMCU(), new Memory());
         s.execute();
         SimpleMatrix dijkstra_dist = s.get_shared_memory().get("output_dist");
+
         s = new Simulator(p, g, new CannonsMCU(), new Memory());
         s.execute();
         SimpleMatrix cannons_dist = s.get_shared_memory().get("output_dist");
+
         s = new Simulator(p, g, new FoxOttoMCU(), new Memory());
         s.execute();
         SimpleMatrix foxotto_dist = s.get_shared_memory().get("output_dist");
 
         double[][] mismatch_matrix = mismatch_percent(new SimpleMatrix[]{dijkstra_dist, cannons_dist, foxotto_dist});
         if (!check_mismatch_matrix(mismatch_matrix)) {
+            // System.out.println(dijkstra_dist);
+            // System.out.println(cannons_dist);
+            // System.out.println(foxotto_dist);
+
             throw new RuntimeException(String.format("%s\n%s", print_config(config), print_mismatch_matrix(mismatch_matrix)));
         }
 

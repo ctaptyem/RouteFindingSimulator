@@ -5,10 +5,9 @@ import uk.ac.cam.cl.ac2499.simulator.Memory;
 
 abstract public class CodeBlock implements Runnable {
     public int id;
-    public int peGridSize;
+    public int pe_grid_size;
     public Memory pm; //privateMemory
     public Memory sm; // sharedMemory
-    // public Memory mm; // metricMemory
     public CommunicationInterface communications;
     public boolean shutdown = false;
     

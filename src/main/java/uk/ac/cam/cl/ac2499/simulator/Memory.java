@@ -4,10 +4,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.ejml.simple.SimpleMatrix;
 
+import uk.ac.cam.cl.ac2499.algorithms.utils.SubMatrix;
 import uk.ac.cam.cl.ac2499.graph.Graph;
 
 public class Memory {
     ConcurrentHashMap<String, SimpleMatrix> matrix_store;
+    ConcurrentHashMap<String, SubMatrix> submatrix_store;
     long total_read;
     long total_write;
     ConcurrentHashMap<String, Long> long_store;
@@ -17,6 +19,7 @@ public class Memory {
     
     public Memory() {
         matrix_store = new ConcurrentHashMap<>();
+        submatrix_store = new ConcurrentHashMap<>();
         long_store = new ConcurrentHashMap<>();
         graph_store = new ConcurrentHashMap<>();
         written_and_not_read = new ConcurrentHashMap<>();
@@ -27,6 +30,14 @@ public class Memory {
     public boolean contains(String key) {
         return matrix_store.containsKey(key);
     }
+    public SubMatrix get_submatrix(String key) {
+        // metric tracking
+        SubMatrix ret = submatrix_store.get(key);
+        total_read += ret.matrix.getNumElements();
+        written_and_not_read.put(key, false);
+        return ret;
+    }
+
     
     public SimpleMatrix get(String key) {
         // metric tracking
@@ -45,12 +56,21 @@ public class Memory {
         total_write += o.getNumElements();
         matrix_store.put(key, o);
         if (written_and_not_read.containsKey(key) && written_and_not_read.get(key)) {
-            // System.out.println(String.format("%n%n%s WAS WRITTEN TO TWICE%n%n", key));
-            throw new RuntimeException(String.format("%n%n%s WAS WRITTEN TO TWICE%n%n", key));
+            throw new RuntimeException(String.format("%s experienced a write-write hazard", key));
         }
         written_and_not_read.put(key, true);
-        
     }
+
+    public void set(String key, SubMatrix o) {
+        // metric tracking
+        total_write += o.matrix.getNumElements();
+        submatrix_store.put(key, o);
+        if (written_and_not_read.containsKey(key) && written_and_not_read.get(key)) {
+            throw new RuntimeException(String.format("%s experienced a write-write hazard", key));
+        }
+        written_and_not_read.put(key, true);
+    }
+
 
     public void set(String key, long o) {
         long_store.put(key,o);

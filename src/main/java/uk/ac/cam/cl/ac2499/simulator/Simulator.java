@@ -19,7 +19,6 @@ public class Simulator {
     ProcessingElement[][] processors;
     ProcessingElement MCU;
     Memory sharedMemory;
-    // Memory metricMemory;
     CommunicationManager communications;
     
     public Simulator(int peGridSize, Graph input, CodeBlock algorithm, Memory sharedMemory) {
@@ -28,7 +27,6 @@ public class Simulator {
         this.processorCount = peGridSize * peGridSize + 1;
         this.processors = new ProcessingElement[peGridSize][peGridSize];
         this.sharedMemory = sharedMemory;
-        // this.metricMemory = new Memory();
         this.communications = new CommunicationManager(processorCount);
         this.MCU = new ProcessingElement(0, sharedMemory, communications);
         this.algorithm = algorithm;
@@ -37,7 +35,7 @@ public class Simulator {
                 this.processors[i][j] = new ProcessingElement(i * peGridSize + j + 1, sharedMemory, communications);
             }
         }
-        this.algorithm.peGridSize = this.peGridSize;
+        this.algorithm.pe_grid_size = this.peGridSize;
         sharedMemory.set("graph", this.graph.adjacency);
         communications.send_instruction(0,algorithm);
     }
@@ -83,7 +81,6 @@ public class Simulator {
         PrintWriter pw_out = new PrintWriter(outputFileName);
         PrintWriter pw_log = new PrintWriter(logFileName);
 
-        // pw_log.print(String.format("%d ms of estimated execution time%n", metricMemory.get_long("runtime")));
         pw_log.println();
         pw_log.print(String.format("%d values read, %d values written to shared memory%n", sharedMemory.total_read, sharedMemory.total_write));
         pw_log.println();
@@ -120,14 +117,13 @@ public class Simulator {
     public void record_measurement(String outputName) throws IOException {
         FileWriter fw = new FileWriter(outputName, true);
         long[] metrics = extract_metrics();
-        // algorithm, peGridSize, node_count, edge_percent, undirected, edge_seed, weight_seed, runtime, commtime, commcount, commvolume, total_read, total_write
+        // algorithm, peGridSize, node_count, avg_degree, edge_percent, undirected, edge_seed, weight_seed, runtime, commtime, commcount, commvolume, total_read, total_write
         fw.write(String.format("%s,%d,%s,%b,%d,%d,%d,%d,%d,%d%n", 
             algorithm.getClass().getSimpleName(), 
             peGridSize, 
             graph.get_descriptor(), 
             graph.is_compressed,
             metrics[0], 
-            // metricMemory.get_long("commtime"), 
             metrics[1], 
             metrics[2], 
             metrics[3],

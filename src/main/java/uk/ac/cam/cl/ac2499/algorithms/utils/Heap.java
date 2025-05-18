@@ -8,7 +8,6 @@ public class Heap {
         // Move the newest node to its correct position
         int current = pq_size;
         while (current > 0) {
-            pm.add_metrics(4, 1);
             int parent = (current - 1) / 2;
             
             // If parent has a shorter distance than current, heap property is satisfied
@@ -17,7 +16,6 @@ public class Heap {
             }
             
             // Swap with parent node if the heap property does not hold
-            pm.add_metrics(6, 2);
             double temp = pm.get(pq).get(current);
             pm.get(pq).set(current, pm.get(pq).get(parent));
             pm.get(pq).set(parent, temp);
@@ -38,7 +36,6 @@ public class Heap {
             return true;
         }
         while (current > 0) {
-            pm.add_metrics(4, 1);
             int parent = (current - 1) / 2;
             
             // If parent has a shorter distance than current, heap property is satisfied
@@ -47,7 +44,6 @@ public class Heap {
             }
             
             // Swap with parent node if the heap property does not hold
-            pm.add_metrics(6, 2);
             double temp = pm.get(pq).get(current);
             pm.get(pq).set(current, pm.get(pq).get(parent));
             pm.get(pq).set(parent, temp);
@@ -62,18 +58,15 @@ public class Heap {
         pm.get(pq).set(0, pm.get(pq).get(pq_size-1));
         int current = 0;
         while (true) {
-            pm.add_metrics(12, 3);
             int left = 2 * current + 1;
             int right = 2 * current + 2;
             int best = current;
             
             // Identify which child node has smaller distance, if any
             if (left < pq_size && pm.get("dist").get((int) pm.get(pq).get(left)) < pm.get("dist").get((int) pm.get(pq).get(best))) {
-                pm.add_metrics(1, 1);
                 best = left;
             }
             if (right < pq_size && pm.get("dist").get((int) pm.get(pq).get(right)) < pm.get("dist").get((int) pm.get(pq).get(best))) {
-                pm.add_metrics(1, 1);
                 best = right;
             }
             
@@ -83,7 +76,6 @@ public class Heap {
             }
 
             // Swap with the smallest child
-            pm.add_metrics(6, 2);
             double temp = pm.get(pq).get(current);
             pm.get(pq).set(current, pm.get(pq).get(best));
             pm.get(pq).set(best, temp);

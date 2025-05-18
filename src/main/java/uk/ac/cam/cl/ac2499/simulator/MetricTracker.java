@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ejml.simple.SimpleMatrix;
 
 import uk.ac.cam.cl.ac2499.algorithms.CodeBlock;
+import uk.ac.cam.cl.ac2499.algorithms.utils.SubMatrix;
 import uk.ac.cam.cl.ac2499.algorithms.utils.Timer;
 
 public class MetricTracker implements CommunicationInterface {
@@ -70,6 +71,13 @@ public class MetricTracker implements CommunicationInterface {
         cm.send_matrix(source, destination, data, matrix, sm);
         runtime.resume();
     }
+    public void send_submatrix(int source, int destination, String data, SubMatrix matrix, Memory sm) {
+        runtime.pause();
+        comm_count++;
+        comm_volume += matrix.matrix.getNumElements();
+        cm.send_submatrix(source, destination, data, matrix, sm);
+        runtime.resume();
+    }
     public void send_instruction(int destination, CodeBlock instruction) {
         runtime.pause();
         cm.send_instruction(destination, instruction);
@@ -101,15 +109,5 @@ public class MetricTracker implements CommunicationInterface {
         comm_volume_log.add(comm_volume);
         comm_volume = 0;
     }
-
-    // public ArrayList<Long> get_runtime_log() {
-    //     return runtime_log;
-    // }
-    // public ArrayList<Long> get_communication_count_log() {
-    //     return comm_count_log;
-    // }
-    // public ArrayList<Long> get_communication_volume_log() {
-    //     return comm_volume_log;
-    // }
 }
 

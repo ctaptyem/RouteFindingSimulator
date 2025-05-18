@@ -159,7 +159,7 @@ def main():
         "pe_grid_sizes": [8,10],#[1,2,3,4,5,6],#[4,7,10,13,16], #[4,7,10,13,16],#2 ** np.linspace(0,4,5, dtype=int), #[1,2,4,8,16]
         "algorithms": ['dijkstra', 'foxotto', 'cannons'] # dynamic
     }
-    output_name = "dynamic_random"
+    output_name = "dynamic_random_4"
     output_path = Path(f"measurements/{output_name}/")
     Path.mkdir(output_path, parents=True, exist_ok=True)
     run_experiments(output_path, graph_configs, simulator_configs, True)
